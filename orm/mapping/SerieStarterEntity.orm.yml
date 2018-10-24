@@ -1,0 +1,25 @@
+App\Entity\Doctrine\SerieStarterEntity:
+  type: entity
+  table: bl_series_starters
+  id:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+  fields:
+    starter:
+      type: integer
+      column: bl_starter
+      options:
+        unsigned: true
+    created_at:
+      type: datetime
+  oneToOne:
+    serie:
+      targetEntity: App\Entity\Doctrine\SerieEntity
+      inversedBy: starter
+      fetch: LAZY
+      joinColumn:
+        name: serie_id
+        referencedColumnName: id

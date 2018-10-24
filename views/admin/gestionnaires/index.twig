@@ -1,0 +1,35 @@
+{% extends 'admin/layout.tpl.twig' %}
+
+{% block title %}Administration des Gestionnaires{% endblock title %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="row">
+            {% if series is not empty %}
+                {% for serie in series %}
+                    <div class="theme-col-small">
+                        <div class="tkmf_block-text">
+                            <h2>Gestionnaire {{ serie|raw }}</h2>
+                            {{ render_tips(serie) }}
+                            <a href="{{ path_for('admin.gestionnaires.edit', { serie_id: serie.id }) }}" class="button1 tkmf_btn-block">Modifier le Gestionnaire {{ serie|serie_label(false) }}</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="tkmf_block-text">
+                    <p class="app_empty-block">Il n'y a pas de série enregistrée ...</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.gestionnaires.create') }}" class="button1 tkmf_btn-block">Créer un nouveau Gestionnaire</a>
+        </div>
+    </div>
+{% endblock content %}

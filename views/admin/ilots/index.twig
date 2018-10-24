@@ -1,0 +1,42 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Administration des Îlots{% endblock title %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div>
+            {% for depot in depots %}
+                <div class="tkmf_block-empty">
+                    <h3>{{ depot }}</h3>
+                </div>
+
+                {% if ilotsByDepot[depot.id] is not empty %}
+                    <div class="row">
+                        {% for ilot in ilotsByDepot[depot.id] %}
+                            <div class="theme-col-small">
+                                <div class="tkmf_block-text app_planning-ilot-content" style="border-color: {{ ilot.color }}">
+                                    <h3 class="inline-title brackets" title="{{ ilot }}">{{ ilot }}</h3>
+                                    {{ render_tips(ilot) }}
+                                    <a href="{{ path_for('admin.ilots.edit', { ilot_name: ilot.name }) }}" class="button1 tkmf_btn-block">Modifier l'îlot {{ ilot.name }}</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="tkmf_block-text">
+                        <p class="app_empty-block">Il n'y a pas d'îlots enregistrés ...</p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.ilots.create') }}" class="button1 tkmf_btn-block">Créer un nouvel îlot</a>
+        </div>
+    </div>
+{% endblock content %}

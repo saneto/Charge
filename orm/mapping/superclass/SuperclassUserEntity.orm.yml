@@ -1,0 +1,36 @@
+App\Entity\Doctrine\Superclass\SuperclassUserEntity:
+    type: entity
+    table: users
+    inheritanceType: SINGLE_TABLE
+    discriminatorColumn:
+      name: role
+      type: string
+    discriminatorMap:
+      guest: App\Entity\Doctrine\UserEntity
+      admin: App\Entity\Doctrine\AdminUserEntity
+      dev: App\Entity\Dev\GaetanSimonEntity
+    id:
+      id:
+        type: string
+        length: 20
+        generator:
+          strategy: NONE
+    uniqueConstraints:
+      id_UNIQUE:
+        columns:
+          - id
+      vme_id_UNIQUE:
+        columns:
+          - vme_id
+    fields:
+      vme_id:
+        type: string
+        nullable: true
+        length: 2
+        options:
+          comment: 'Code Vendeur VME'
+          column: vme_id
+      displayname:
+        type: string
+        nullable: true
+        length: 255

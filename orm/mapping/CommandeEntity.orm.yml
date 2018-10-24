@@ -1,0 +1,156 @@
+App\Entity\Doctrine\CommandeEntity:
+    type: entity
+    table: commandes
+    indexes:
+        fk_commandes_ilots1_idx:
+            columns:
+                - processing_ilot
+        fk_commandes_series1_idx:
+            columns:
+                - serie_id
+        fk_commandes_users1_idx:
+            columns:
+                - vendor_id
+    uniqueConstraints:
+        id_UNIQUE:
+            columns:
+                - id
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+    fields:
+        blId:
+            type: integer
+            nullable: true
+            column: bl_id
+            options:
+                unsigned: false
+                comment: 'Numéro de BL'
+        clientName:
+            type: string
+            nullable: true
+            length: 255
+            column: client_name
+            options:
+                fixed: false
+                comment: 'Client qui a passé commande'
+        clientReference:
+            type: string
+            nullable: true
+            length: 255
+            column: client_reference
+            options:
+                fixed: false
+                comment: 'Référence commande chez le client'
+        quantity:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+                comment: 'Quantité de pièces'
+        machineTs:
+            type: string
+            nullable: true
+            length: 255
+            column: machine_ts
+            options:
+                fixed: false
+                comment: 'Transporteur'
+        sousTraitant:
+            type: string
+            nullable: true
+            length: 255
+            column: sous_traitant
+            options:
+                fixed: false
+                comment: 'Transporteur'
+        transport:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+                comment: 'Transporteur'
+        departTs:
+            type: date
+            nullable: true
+            column: depart_ts
+            options:
+                comment: 'Date de départ TS'
+        deliveryAt:
+            type: date
+            nullable: true
+            column: delivery_at
+            options:
+                comment: 'Date de départ TS'
+        processingAt:
+            type: date
+            nullable: true
+            column: processing_at
+            options:
+                comment: 'Date de traitement de la commande par l''ilôt'
+        casType:
+            type: string
+            nullable: true
+            length: 255
+            column: cas_type
+            options:
+                fixed: false
+                comment: 'Numéro de Cas'
+        createdAt:
+            type: datetime
+            nullable: false
+            column: created_at
+            options:
+                comment: 'Date de prise de la commande'
+        receptionAt:
+            type: datetime
+            nullable: false
+            column: reception_at
+            options:
+                comment: 'Date de réception par le client'
+        canceledAt:
+            type: datetime
+            nullable: true
+            column: canceled_at
+            options:
+                comment: 'Détermine si la commande est annulée'
+    oneToMany:
+      comments:
+        targetEntity: App\Entity\Doctrine\CommentEntity
+        mappedBy: bill
+        fetch: LAZY
+        cascade:
+          - persist
+      processings:
+        targetEntity: App\Entity\Doctrine\CommandeProcessingEntity
+        mappedBy: bill
+        fetch: LAZY
+        cascade:
+          - persist
+    manyToOne:
+      serie:
+        targetEntity: App\Entity\Doctrine\SerieEntity
+        column: serie_id
+        fetch: LAZY
+        mappedBy: id
+        joinColumns:
+          serie_id:
+            referencedColumnName: id
+        orphanRemoval: false
+      vendor:
+          targetEntity: App\Entity\Doctrine\UserEntity
+          cascade:
+            - persist
+          fetch: LAZY
+          mappedBy: id
+          column: vendor_id
+          joinColumns:
+              vendor_id:
+                  referencedColumnName: id
+          orphanRemoval: false
+    lifecycleCallbacks: {  }

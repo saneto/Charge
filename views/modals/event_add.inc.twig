@@ -1,0 +1,35 @@
+{% extends "modals/modal.tpl.twig" %}
+
+{% block content %}
+    <form action="{{ modal.action }}" method="post" id="form_{{ modal.id }}" class="modal-form">
+        <div class="modal-errors"></div>
+        <div>
+            <label for="eventAddQuantity">Quantité:</label>
+            <div>
+                <input type="text" id="eventAddQuantity" name="quantity" maxlength="3" placeholder="Saisir quantité" style="width: 120px; margin-right: 8px;">
+                <span>pièces</span>
+            </div>
+        </div>
+        <div>
+            <label for="eventAddQuantityAt">Date de disponibilité:</label>
+            <div>
+                <input type="text" id="eventAddQuantityAt" name="quantity_at" class="datepicker">
+            </div>
+        </div>
+        <div>
+            <label for="eventAddIlot">Îlot:</label>
+            <div>
+                <select name="ilot_id" id="eventAddIlot" style="width: 100%; display: block;">
+                    <option value="0" selected disabled>Sélectionnez un îlot</option>
+                    {% for depot in depots %}
+                        <optgroup label="{{ depot }}">
+                            {% for ilot in ilotsByDepots[depot.id] %}
+                                <option value="{{ ilot.id }}">{{ ilot }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

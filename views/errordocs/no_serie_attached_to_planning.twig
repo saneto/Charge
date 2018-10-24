@@ -1,0 +1,22 @@
+{% extends "exception.tpl.twig" %}
+
+{% block content %}
+    <p class="details">
+        {% if plannings|length >= 2 %}
+            Les plannings: {{ plannings|join(', ') }},
+            attachés au Gestionnaire {{ serie|serie_label(false) }} ne regroupent pas d'îlots.
+        {% else %}
+            Le planning {{ plannings[0] }}
+            attaché au Gestionnaire {{ serie|serie_label(false) }} ne regroupe pas d'îlots.
+        {% endif %}
+        <br>
+        En conséquence, l'accès est bloqué.
+    </p>
+
+    <ul>
+        <li>Pour résoudre le problème,
+        contactez un responsable pour qu'il ajoute des îlots aux plannings: {{ plannings|join(' ou ') }}</li>
+
+        <li>Si vous êtes autorisé, <a href="{{ path_for('admin.ilots.index') }}">cliquez directement ici pour ajouter des îlots aux plannings: {{ plannings|join(' ou ') }}</a>.</li>
+    </ul>
+{% endblock content %}

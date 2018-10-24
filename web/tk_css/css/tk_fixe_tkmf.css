@@ -1,0 +1,320 @@
+﻿/* pied de page fixé en bas */
+html,
+body {
+    height: 100%;
+}
+#wrapper {
+    min-height: 100%;
+    position: relative;
+}
+#content {
+    z-index: 0;
+    position: relative;
+    padding-bottom: 200px;
+}
+#footer {
+    z-index: 10;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    min-height: 150px;
+}
+
+/* Bordure de couleur dans l'en-tête pour identifier l'appli : par défaut grise (darkGray) */
+/*#header { border-top: 6px solid #4B5564; }*/
+
+/** séparation #header et #content */
+#header { margin-bottom: 66px; }
+
+/* Modif' sur la taille des lettres "we" */
+#header .head .we-letters {
+    margin-top: 26px;
+    font-size: 5.5em;
+}
+
+.bcwrapper ul li a::before {
+	color: #000000 !important;
+}
+
+/* Ajout de "espace" au dessus de tkMF */
+.tkmf_espace {
+    display: block;
+    letter-spacing: 9px;
+    color: #78879b;
+    font-family: TKTypeMedium, sans-serif !important;
+}
+
+/* bloc de texte sur fond blanc */
+.tkmf_block-text,
+.tkmf_block-empty {
+    margin-bottom: 10.672px;
+}
+.tkmf_block-text {
+    padding: 15px 24px;
+    background-color: #ffffff;
+}
+.theme-col-all .tkmf_block-text {
+    margin-bottom: 0;
+}
+    /* titre du bloc */
+    .tkmf_block-text h2,
+    .tkmf_block-text h3 {
+        font-size: 1.5em;
+        line-height: 1.375em;
+        margin-bottom: 10.672px;
+    }
+    .tkmf_block-text h2.headline,
+    .tkmf_block-text h3.headline {
+        font-size: 1.5em;
+        line-height: 1.375em;
+        background-color: #ffffff;
+        border-bottom: 1px solid #D9DEE8;
+        /*margin: 0 16px;*/
+        padding: 24px 0 10.672px;
+    }
+
+/* effet désactivation des buttons avec l'attribut "disabled" */
+input[type=submit]:disabled,
+input[type=submit]:disabled:hover,
+button:disabled,
+button:disabled:hover {
+    cursor: pointer;
+    color: #a5a5a4;
+    background: #ededed none repeat scroll 0 0;
+}
+
+/* ajout d'états au input (survole, focus) */
+input[type="text"]:hover,
+input[type="email"]:hover,
+input[type="password"]:hover,
+select:hover,
+textarea:hover {
+    border-color: #78879B;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus,
+textarea:focus {
+    color: #000000;
+    border-color: #003C7D;
+}
+
+input.tkmf_input-block {
+    box-sizing: border-box;
+    width: 100%;
+    display: block;
+}
+
+/* style du formulaire de recherche */
+.search {
+    color: #ffffff;
+    cursor: pointer;
+}
+#theme-search-box:invalid {
+    background-color: transparent;
+}
+
+/* theme des input checkbox / radio (GROS copié/collé depuis we-net > Paramétrages */
+.theme-checkboxes label input[type="checkbox"],
+.theme-radio label input[type="radio"] {
+    position: absolute;
+    visibility: hidden;
+}
+.tkmf_theme-radio {
+    margin-bottom: 36px;
+}
+.tkmf_theme-radio label {
+    color: #00A0F0;
+    font-size: 16px;
+    line-height: 24px;
+    display: inline;
+}
+.tkmf_theme-radio label:after {
+    content: '\A';
+    position: absolute;
+    white-space: pre;
+}
+.tkmf_theme-radio label input[type=radio] {
+    position: absolute;
+    visibility: hidden;
+}
+.tkmf_theme-radio label input[type=radio]:checked + span:before {
+    z-index: 2;
+}
+.tkmf_theme-radio label span {
+    display: block;
+    margin-bottom: 24px;
+    padding-left: 30px;
+    position: relative;
+}
+.tkmf_theme-radio label span:before {
+    display: inline-block;
+    font-family: 'icomoon';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-decoration: underline;
+    line-height: 1;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.tkmf_theme-radio label span:before,
+.tkmf_theme-radio label span:hover:before {
+    text-decoration: none;
+}
+.tkmf_theme-radio label span:before {
+    content: "\e60f";
+}
+.tkmf_theme-radio label span:before {
+    color: #00A0F0;
+    display: block;
+    font-size: 12px;
+    height: 20px;
+    left: 6px;
+    margin-top: -6px;
+    position: absolute;
+    top: 12px;
+    width: 20px;
+}
+.tkmf_theme-radio label span:after {
+    background-color: #ffffff;
+    border: 2px solid #D9DEE8;
+    border-radius: 50%;
+    content: "";
+    display: block;
+    height: 20px;
+    left: 0;
+    margin-top: -12px;
+    position: absolute;
+    top: 12px;
+    width: 20px;
+    z-index: 1;
+}
+
+/* effet button "liste déroulante" */
+div.tkmf_btn-list {
+    position: relative;
+    margin-bottom: 10.672px;
+}
+div.tkmf_btn-list:last-of-type { margin-bottom: 0; }
+
+    div.tkmf_btn-list > :first-child {
+        border: none;
+        padding: 14px 16px 13px;
+        display: block;
+        position: relative;
+        color: #00A0F0;
+        text-decoration: none;
+        background-color: #EEF0F2;
+    }
+    div.tkmf_btn-list > a:hover,
+    div.tkmf_btn-list.readonly > a:hover {
+        background-color: #e7eaec;
+    }
+        div.tkmf_btn-list > :first-child::after {
+            font-family: icomoon;
+            content: "\e613";  /* fleche vers le bas */
+            display: block;
+            float: right;
+            text-align: right;
+            clear: both;
+            padding: 0 6px;
+            background-color: #d1dbe6;
+        }
+    div.tkmf_btn-list > :first-child > span {
+        box-sizing: border-box;
+        display: inline-block;
+        margin-right: 96px;
+    }
+
+    div.tkmf_btn-list.active > :first-child {
+        color: #ffffff;
+        background-color: #003C7D;
+    }
+        div.tkmf_btn-list.active > :first-child::after {
+            background-color: #0077dd;
+        }
+        div.tkmf_btn-list.active > :first-child::after { content: "\e617"; } /* fleche vers le haut */
+        div.tkmf_btn-list.last > :first-child::after { content: "\e602"; } /* icon "plus" */
+        div.tkmf_btn-list.last.open > :first-child::after { content: "\e603"; } /* icon "moins" */
+        div.tkmf_btn-list.last.open.pending > :first-child::after {
+            content: "";
+            padding: 0;
+            width: 28px;
+            height: 26px;
+            background: #d1dbe6 url(../img/loader.gif) center center no-repeat;
+        }
+        div.tkmf_btn-list.last.empty > :first-child::after { content: "\e64b"; } /* icon "cadena" */
+        div.tkmf_btn-list.readonly > :first-child::after { display: none; } /* sans icon */
+
+    div.tkmf_btn-list > div {
+        margin-top: 10.672px;
+        padding-left: 24px;
+        display: none;
+    }
+        @media screen and (max-width: 779px) {
+            div.tkmf_btn-list > div { padding-left: 4px; }
+            div.tkmf_btn-list.last > div { padding-left: 16px; }
+        }
+
+    div.tkmf_btn-list.active > div,
+    div.tkmf_btn-list.last.open > div {
+        display: block;
+    }
+
+/* button en full-size */
+.tkmf_btn-block {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+}
+
+/* block contenant un icon d'appli avec le nom */
+.tkmf_content-item {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 5px;
+    text-align: center;
+    word-wrap: break-word;
+    text-decoration: none;
+    vertical-align: middle;
+}
+.tkmf_content-item:hover {
+    text-decoration: underline;
+}
+    .tkmf_content-item > img {
+        display: block;
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 8px;
+        /*line-height: 130px;*/
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+    }
+
+.flash .alert {
+    cursor: pointer;
+}
+.alert {
+    padding: 15px 24px;
+    color: #ffffff;
+    font-size: 18px;
+    font-family: tktypemedium;
+}
+.alert:last-of-type { margin-bottom: 0; }
+.alert.alert-danger {
+    background-color: #ff0040;
+}
+.alert.alert-success {
+    background-color: #7abf13;
+}
+.alert.alert-warning {
+    background-color: #ffa600;
+}
+.alert.alert-info {
+    background-color: #a51482;
+}

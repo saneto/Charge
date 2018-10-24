@@ -1,0 +1,65 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Modification du Gestionnaire {{ serie|serie_label(false) }}{% endblock title %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/app/admin.js"></script>
+{% endblock script %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('admin/gestionnaires/index.twig', path_for('admin.gestionnaires.index')) }}</li>
+        <li><span>Modification du Gestionnaire {{ serie|raw }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">Informations sur le Gestionnaire {{ serie|raw }}</h2>
+        </div>
+        <div class="tkmf_block-text">
+            {% include "admin/gestionnaires/form.inc.twig" %}
+        </div>
+    </div>
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.gestionnaires.delete', { serie_id: serie.id }) }}"
+               type="reset" id="removeSerie" class="button2 delete-hard tkmf_btn-block"
+               data-location="{{ path_for('admin.gestionnaires.index') }}">Supprimer le Gestionnaire</a>
+        </div>
+
+        {% if serie.plannings is not empty %}
+            <div class="tkmf_block-text">
+                <h2 class="headline">Visibilité des plannings</h2>
+                <ul>
+                    {% for planning in serie.plannings %}
+                        <li class="calendar"><a href="{{ path_for('admin.plannings.edit', { planning_slug: planning.slug }) }}">{{ planning }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="tkmf_block-empty">
+                <div class="alert alert-warning">Ce Gestionnaire n'est vu par aucun vendeur,
+                    <a href="{{ path_for('admin.plannings.index') }}">ajoutez-le à un planning</a> !
+                </div>
+            </div>
+        {% endif %}
+
+        {% include "admin/gestionnaires/form_help.inc.twig" %}
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">Aide</h2>
+
+            <ul>
+                <li class="attention">
+                    L'identifiant du Gestionnaire ne peut pas être modifié.
+                </li>
+                <li class="info">
+                    <b>Suppression impossible ?</b>
+                    Le Gestionnaire {{ serie|raw }} a été utilisé pour créer une commande ou un îlot...
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

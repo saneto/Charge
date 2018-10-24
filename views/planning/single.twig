@@ -1,0 +1,98 @@
+{% extends 'layout.tpl.twig' %}
+
+{% set colors = {
+    event: planning.color,
+    text: planning.color|reverse_color
+} %}
+
+{% block title %}Planning "{{ planning }}"{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="js/lib/fullcalendar/fullcalendar.min.css">
+{% endblock css %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('planning/index.twig', path_for('plannings.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text" style="position: relative;">
+            <div class="load_planning alert alert-info">Récupération des évènements du planning...</div>
+
+            <h2 class="headline">{{ block('title') }}</h2>
+            <div id="planning_depot" data-holidays="{{ path_for('events.holidays') }}" data-events-sources="{{ eventsSources|json_encode }}"></div>
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <button id="open_modal_add-event" class="button1 tkmf_btn-block">Ajouter une disponibilité</button>
+        </div>
+
+        <div class="tkmf_block-text" style="border-bottom: 2px solid {{ planning.color }};">
+            <h2 class="headline">Détails sur le planning</h2>
+            <ul>
+                <li class="tag"><span class="app_label">Dénomination:</span> {{ planning }}</li>
+                <li class="wreck"><span class="app_label">Gestionnaires:</span>
+                    {% if planningSeries|length > 0 %}
+                        {{ planningSeries|join(', ') }}
+                    {% else %}
+                        <a href="{{ path_for('admin.plannings.edit', { planning_slug: planning.slug }) }}">ajouter</a>
+                    {% endif %}
+                </li>
+                <li class="info"><span class="app_label">Identifiant planning:</span> {{ planning.id }} ({{ planning.slug }})</li>
+            </ul>
+        </div>
+
+        {% if planning.ilots is not empty %}
+            <div class="tkmf_block-text">
+                <h2 class="headline inline-title" title="Îlots du planning {{ planning }}">Îlots de <small>{{ planning }}</small></h2>
+                {% for depot in depots %}
+                    <h3 class="inline-title">{{ depot }}</h3>
+                        <ul class="list-ilots">
+                            {% for ilot in ilotsByDepots[depot.id] %}
+                                <li class="dot inline-title"><span class="app_label">{{ ilot.name }}</span> {{ ilot.dimensions ?? ilot.label }}</li>
+                            {% endfor %}
+                        </ul>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="tkmf_block-empty">
+                <div class="alert alert-warning">{{ planning }} ne regroupe aucun îlot... Pensez à <a href="{{ path_for('admin.ilots.index') }}">en ajouter</a> !</div>
+            </div>
+        {% endif %}
+    </div>
+
+     {#Modal d'ajout d'un événement au planning#}
+    {% include "modals/event_add.inc.twig" with {
+        modal: {
+            id: "modal_pln_event-add",
+            title: "Ajouter une disponibilité",
+            action: path_for('plannings.charge_create', { planning_id: planning.id })
+        }
+    } %}
+
+    {#Modal de modification d'un événement au planning#}
+    {% include "modals/event_edit.inc.twig" with {
+        modal: { id: "modal_pln_event-edit", title: "Modifier une disponibilité" }
+    } %}
+
+    {% include "modals/commande_charges.inc.twig" with {
+        modal: { id: "modal_pln_commande-charge", title: "Détails des prélèvements" }
+    } %}
+
+{% endblock content %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/moment.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/locale/fr.js"></script>
+    <script type="application/javascript" src="js/app/planning-fullcalendar.js"></script>
+{% endblock script %}

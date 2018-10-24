@@ -1,0 +1,7 @@
+<ul class="tips-list">
+    {% for k, tips in tips %}
+        {% for tip in tips %}
+            <li class="tip tip-{{ k }}">{{ tip }}</li>
+        {% endfor %}
+    {% endfor %}
+</ul>

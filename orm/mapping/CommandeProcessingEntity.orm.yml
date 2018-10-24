@@ -1,0 +1,56 @@
+App\Entity\Doctrine\CommandeProcessingEntity:
+    type: entity
+    table: commandes_processing
+    indexes:
+        fk_commandes_supplying_commandes1_idx:
+            columns:
+                - bill_id
+        fk_commandes_supplying_depots1_idx:
+            columns:
+                - from_depot
+        fk_commandes_processing_ilots1_idx:
+            columns:
+                - to_ilot
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        quantity:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+                comment: 'Quantité de pièces prélevées dans le dépôt'
+        processing_at:
+            type: date
+            nullable: false
+    manyToOne:
+        bill:
+          targetEntity: App\Entity\Doctrine\CommandeEntity
+          inversedBy: processings
+          joinColumn:
+            name: bill_id
+            referencedColumnName: id
+        depot:
+          targetEntity: App\Entity\Doctrine\DepotEntity
+          cascade: {}
+          fetch: LAZY
+          mappedBy: from_depot
+          joinColumn:
+            name: from_depot
+            referencedColumnName: id
+        ilot:
+          targetEntity: App\Entity\Doctrine\IlotEntity
+          cascade: {}
+          fetch: LAZY
+          mappedBy: to_ilot
+          joinColumn:
+            name: to_ilot
+            referencedColumnName: id
+    lifecycleCallbacks: {}

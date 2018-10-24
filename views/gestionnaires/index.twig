@@ -1,0 +1,28 @@
+{% extends "layout.tpl.twig" %}
+{% block title %}Gestionnaires{% endblock %}
+
+{% block content %}
+
+    {% if series is empty %}
+        <div class="theme-col-all">
+            <div class="tkmf_block-text">
+                <p class="app_empty-block">Il n'y a pas de Série enregistrée...</p>
+            </div>
+        </div>
+    {% else %}
+        {% for serie in series %}
+            <div class="theme-col-small">
+                <div class="tkmf_block-text">
+                    <h2>Série {{ serie|raw }}</h2>
+                    <hr>
+                    {{ render_tips(serie) }}
+                    <p>Réserver un n° de BL pour une saisie de commande Série {{ serie|raw }}.</p>
+                    <p>
+                        <a href="{{ path_for('gestionnaires.reserve', { serie_id: serie.id }) }}" class="button1 tkmf_btn-block">Saisir une Série {{ serie|serie_label(false) }}</a>
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

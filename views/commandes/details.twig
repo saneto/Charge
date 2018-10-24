@@ -1,0 +1,364 @@
+{% extends "layout.tpl.twig" %}
+{% block title %}Détails de la commande n°{{ commande.id }} (BL {{ commande.blId }}){% endblock title %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('commandes/index.twig', path_for('commandes.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block css %}
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="../web/tk_css/css/form.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript">
+        $(document).ready(function () {
+            var $cancelCommande = $('#cancelCommande');
+
+            // datepickers
+            $('.datepicker').datepicker({
+                maxDate: "+1y"
+            });
+
+            $cancelCommande.on('click', function (e) {
+                e.preventDefault();
+                var href = $cancelCommande.attr('href');
+
+                var message = prompt("Raison de l'annulation:");
+                if (message !== null) {
+                    message = encodeURIComponent(message);
+                    href = href + "?m=" + message;
+
+                    window.location.assign(href);
+                }
+            });
+        });
+    </script>
+    {% if commande.canceled == false %}
+    <script type="application/javascript">
+        $(document).ready(function () {
+
+            var $editChargeHref = $('.edit-charge');
+            var $editChargeModal = $('#modal_cde_charge-edit');
+            var $editChargeForm = $('#form_modal_cde_charge-edit');
+
+            $editChargeHref.on('click', function (e) {
+                var $self = $(this);
+                e.preventDefault();
+
+                $.ajax({
+                    url: $self.attr('href'),
+                    method: 'GET',
+                    dataType: 'json',
+                    beforeSend: function () {
+                        addMessage("Récupération du prélèvement ...", 'info', 500);
+                    },
+                    error: function () {
+                        addMessage("Impossible de récupérer le prélèvement", 'danger', 1500);
+                    },
+                    success: function (charge) {
+                        $editChargeForm.attr('action', $self.attr('href'));
+                        $editChargeModal.data('charge', JSON.stringify(charge));
+                        $editChargeModal.dialog('open');
+                    }
+                })
+            });
+            $editChargeForm.on('submit', function (e) {
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'PUT',
+                    data: getFormData($(this)),
+                    dataType: 'json',
+                    error: function (response) {
+                        var errors = response.responseJSON.errors;
+                        var $modal_errors = $('.modal-errors', $editChargeModal);
+
+                        if (response.status === 500) {
+                            var error = response.responseJSON.error;
+                            addMessage(error, 'warning', 5000);
+                            return false;
+                        } else {
+                            var errors = response.responseJSON.errors;
+                            for (var key in errors) {
+                                var error = errors[key];
+                                var $input = $editChargeForm.find("[name=" + key + "]");
+
+                                $input.addClass('error');
+                                addModalMessage($modal_errors, key, error.message, 'danger');
+                            }
+                            return false;
+                        }
+                    },
+                    success: function (response) {
+                        sessionStorage.setItem('fastFlash', JSON.stringify({
+                            type: 'success',
+                            message: response.message
+                        }));
+                        window.location.reload(true);
+                    }
+                });
+                e.preventDefault();
+            });
+            $editChargeModal.dialog({
+                width: 'auto',
+                autoOpen: false,
+                width: 312,
+                maxHeight: 520,
+                open: function () {
+                    var charge = JSON.parse($(this).data('charge'));
+                    var processing_at = moment(charge.processing_at).format('DD/MM/YYYY');
+
+                    $('#chargeEditQuantity', $editChargeForm).val(charge.quantity);
+                    $('#chargeEditQuantityAt', $editChargeForm).val(processing_at);
+                    $('#chargeEditDepot option[value="' + charge.depot.id + '"]', $editChargeForm).prop('selected', true);
+                    $('#chargeEditIlot option[value="' + charge.ilot.id + '"]', $editChargeForm).prop('selected', true);
+                    $(this).dialog('option', 'title', "Prélèvement " + charge.ilot.name);
+                },
+                buttons: [
+                    {
+                        text: "Fermer",
+                        type: "button",
+                        class: "button2",
+                        click: function () {
+                            $(this).dialog('close');
+                        }
+                    },
+                    {
+                        text: "Modifier",
+                        type: "button",
+                        class: "button1",
+                        click: function () {
+                            $editChargeForm.submit();
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+    {% endif %}
+{% endblock script %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="tkmf_block-text">
+            {% if commande.canceled == false %}
+                <form action="{{ path_for('commandes.update', { bill_id: commande.id }) }}" method="POST">
+                <input type="hidden" name="_METHOD" value="PUT">
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="commande_id">N° de devis tkMF:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="commande_id" value="{{ commande.id }}" disabled>
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="client_reference">Référence cde client:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="client_reference" name="client_reference" value="{{ commande.clientReference }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="client_name">Nom du client:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="client_name" name="client_name" value="{{ commande.clientName}}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="sous_traitant">Sous-traitant:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="sous_traitant" name="sous_traitant" value="{{ commande.sousTraitant }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="transport">Transporteur:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="transport" name="transport" value="{{ commande.transport }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="cas_type">N° de CAS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="cas_type" name="cas_type" value="{{ commande.casType }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="machine_ts">Machine TS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="machine_ts" name="machine_ts" value="{{ commande.machineTs }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="depart_ts">Date départ TS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="depart_ts" class="datepicker" name="depart_ts" value="{{ commande.departTs }}">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="delivery_at">Date rendu client:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="delivery_at" class="datepicker" name="delivery_at" value="{{ commande.deliveryAt ? commande.deliveryAt|date('d/m/Y') }}">
+                    </div>
+                </div>
+
+
+                 <div class="fieldset">
+                    <div class="label">
+                        <label for="date_depart">Date de départ atelier:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="date_depart" class="datepicker" name="date_depart" value="">
+                    </div>
+                </div>
+
+                 <div class="fieldset">
+                    <div class="label">
+                        <label for="date_lancement">Date de lancement:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="date_lancement" class="datepicker" name="date_lancement" value="">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="button">
+                        <button type="submit" class="button1">Appliquer les modifications</button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+                <ul>
+                    <li><b>N° de devis tkMF</b>: {{ commande.id }}</li>
+                    <li><b>Référence cde client</b>: {{ commande.clientReference }}</li>
+                    <li><b>Sous-traitant</b>: {{ commande.sousTraitant }}</li>
+                    <li><b>Transportteur</b>: {{ commande.transport }}</li>
+                    <li><b>Machine TS</b>: {{ commande.machineTs ?: "N/A" }}</li>
+                    <li><b>Date départ TS</b>: {{ commande.departTs|date('d/m/Y') }}</li>
+                    <li><b>Date de livraison</b>: {{ commande.deliveryAt ? commande.deliveryAt|date('d/m/Y') }}</li>
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">Détails des prélèvements (total: {{ commande.quantity }} pièces)</h2>
+        </div>
+
+        <div class="row">
+            {% for processing in commande.processings %}
+                <div class="theme-col-small">
+                    <div class="tkmf_block-text app_planning-ilot-content" style="border-color: {{ processing.ilot.color }};">
+                        <h3 class="inline-title">{{ processing.ilot }}</h3>
+
+                        <ul>
+                            <li class="app_empty-block"><b>Quantité</b>: {{ processing.quantity }} pièces</li>
+                            <li><b>Provenance</b>: {{ processing.depot }}</li>
+                            <li><b>Date de traitement</b>: {{ processing.processingAt|date('d/m/Y') }}</li>
+                        </ul>
+
+                        {% if processing.bill.canceled == false %}
+                            <div class="text-center" style="margin-top:8px;">
+                                <a href="{{ path_for('commandes.charges.update', { charge_id: processing.id }) }}" class="icon-tk-gesture edit-charge">Modifier</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="row">
+            <div class="tkmf_block-text">
+                <h2 class="headline-empty">Suivis de la commande</h2>
+            </div>
+
+            <div class="tkmf_block-text">
+                <table class="tk-table">
+                    <thead>
+                    <tr>
+                        <th>Type de suivi</th>
+                        <th>Commenté par</th>
+                        <th>Commentaire</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for comment in commande.comments %}
+                        <tr>
+                            <td style="text-align: center;">{{ comment.type }}</td>
+                            <td style="text-align: center;">{{ comment.author }}</td>
+                            <td>{{ comment.text }}</td>
+                            <td style="text-align: center;">{{ comment.date|date('d/m/Y') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            {% if commande.receptionned %}
+                <div class="alert alert-success text-center">Reçue le {{ commande.canceledAt|date('d/m/Y') }}</div>
+            {% else %}
+                {% if commande.canceled %}
+                    <div class="alert alert-warning text-center">Annulée le {{ commande.canceledAt|date('d/m/Y à H\\hi') }}</div>
+                {% else %}
+                    <a id="cancelCommande" href="{{ path_for('commandes.cancel', { bill_id: commande.id }) }}" class="button2 delete-hard tkmf_btn-block">Annuler cette commande</a>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="tkmf_block-text">
+            <h2 class="headline">À propos du vendeur</h2>
+            <img src="{{ vendor.avatar }}" alt="{{ vendor }}" class="commande-vendor_avatar">
+            <ul>
+                <li class="vendor">Vendeur: <a href="{{ path_for('accounts.index', { user_id: vendor.id }) }}">{{ vendor }}</a> ({{ vendor.vmeId }})</li>
+            </ul>
+        </div>
+        <div class="tkmf_block-text">
+            <h2 class="headline">À propos du client</h2>
+            <ul>
+                <li class="vendor">Client: {{ commande.clientName }}</li>
+                <li class="tag">Référence cde: {{ commande.clientReference }}</li>
+            </ul>
+        </div>
+    </div>
+
+    {#Modal de modification d'un événement au planning#}
+    {% include "modals/charge_edit.inc.twig" with {
+        modal: { id: "modal_cde_charge-edit", title: "Modifier un prélèvement" }
+    } %}
+{% endblock content %}

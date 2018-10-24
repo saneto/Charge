@@ -1,0 +1,81 @@
+{% block form %}
+<form action="{{ form.action }}" method="{{ form.method }}">
+    <input type="hidden" name="_METHOD" value="{{ form.xmethod }}">
+    <input type="hidden" name="ilot_id" value="{{ ilot.id }}">
+
+    <div class="fieldset">
+        <div class="label">
+            <label for="name">Identifiant îlot VME:</label>
+        </div>
+        <div class="input">
+            <input type="text" id="name" name="name" placeholder="Identifiant de l'îlot dans VME (ex: FFMP)"
+                   value="{{ form.data.name }}" required>
+        </div>
+    </div>
+    <div class="fieldset">
+        <div class="label">
+            <label for="label">Dénomination:</label>
+        </div>
+        <div class="input">
+            <input type="text" id="label" name="label" placeholder="Libellé de l'îlot (ex: Moyennes pièces)"
+                   value="{{ form.data.label }}" required>
+        </div>
+    </div>
+    <div class="fieldset">
+        <div class="label">
+            <label for="color">Couleur de l'îlot:</label>
+        </div>
+        <div class="input">
+            <input type="text" id="color" name="color" placeholder="Couleur des disponibilités dans le planning"
+                   value="{{ form.data.color }}"
+                   data-wheelcolorpicker data-wcp-sliders="wv" data-wcp-preview="true" required>
+        </div>
+    </div>
+    <div class="fieldset">
+        <div class="label">
+            <label for="dimensions">Dimensions:</label>
+        </div>
+        <div class="input input-collapsed">
+            <input type="text" id="dimensions" name="dimensions[x]" placeholder="longeur"
+                   value="{{ form.data.dx }}" required> x
+            <input type="text" id="dimensions" name="dimensions[y]" placeholder="largeur"
+                   value="{{ form.data.dy }}" required> x
+            <input type="text" id="dimensions" name="dimensions[z]" placeholder="hauteur"
+                   value="{{ form.data.dz }}">
+        </div>
+    </div>
+    <div class="fieldset">
+        <div class="label">
+            <label for="plannings">Planning:</label>
+        </div>
+        <div class="input">
+            <select name="plannings[]" id="plannings" class="js-select2" multiple="multiple">
+                {% for planning in plannings %}
+                    <option value="{{ planning.id }}" {{ planning.id in ilotPlannings ? "selected" : "" }}>{{ planning }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="fieldset">
+        <div class="label">
+            <label for="depots">Emplacement:</label>
+        </div>
+        <div class="input">
+            <select name="location" id="depots" required>
+                <option selected disabled>Sélectionnez l'emplacement de l'îlot</option>
+                {% for depot in depots %}
+                    <option value="{{ depot.id }}" data-id="{{ depot.id }}"
+                            {{ depot.id == ilot.location.id ? "selected": "" }}>{{ depot }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="fieldset">
+        <div class="button">
+            <button type="button" class="button2">Annuler</button>
+            <button type="submit" class="button1">{{ form.contextMessage }} l'îlot</button>
+        </div>
+    </div>
+</form>
+{% endblock form %}

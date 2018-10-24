@@ -1,0 +1,24 @@
+App\Entity\Doctrine\CommentTypeEntity:
+  type: entity
+  table: comments_types
+  uniqueConstraints:
+    name_UNIQUE:
+      columns:
+        - type
+  id:
+    type:
+      type: string
+      nullable: false
+      length: 45
+      options:
+        fixed: false
+        comment: 'Type de commentaire'
+  fields:
+    label:
+      type: string
+      nullable: false
+      length: 255
+      options:
+        fixed: false
+        comment: 'Désignation du type de commentaire'
+  lifecycleCallbacks: {  }

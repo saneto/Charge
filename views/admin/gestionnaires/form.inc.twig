@@ -1,0 +1,56 @@
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+{% endblock css %}
+
+{% block form %}
+    <form action="{{ form.action }}" method="{{ form.method }}" id="form_admin-gestionnaire_{{ form.context }}">
+        <input type="hidden" name="_METHOD" value="{{ form.xmethod }}">
+        <div class="fieldset">
+            <div class="label">
+                <label for="gest_id">ID du Gestionnaire:</label>
+                <span><small>(obligatoire)</small></span>
+            </div>
+            <div class="input">
+                <input type="text" name="id" id="gest_id" placeholder="Identifiant sur 3 chiffres de la Série (ex: 949)" maxlength="3" value="{{ form.data.id }}" {{ form.fields.id }}>
+            </div>
+        </div>
+        <div class="fieldset">
+            <div class="label">
+                <label for="starter_id">BL de démarrage:</label>
+                <span><small>(obligatoire)</small></span>
+            </div>
+            <div class="input">
+                <input type="text" name="starter_id" id="starter_id" placeholder="Dernier n° de BL saisie (ex: 949321)" maxlength="6" value="{{ form.data.starter }}" required>
+            </div>
+        </div>
+        <div class="fieldset">
+            <div class="label">
+                <label for="gest_label">Nom du Gestionnaire:</label>
+                <span><small>(facultatif)</small></span>
+            </div>
+            <div class="input">
+                <input type="text" name="label" value="{{ form.data.label }}" id="gest_label" placeholder="Nom court pour désigner la Série (ex: OXY)" maxlength="16">
+            </div>
+        </div>
+        <div class="fieldset">
+            <div class="label">
+                <label for="gest_depot">Dépôt de gestion:</label>
+                <span><small>(obligatoire)</small></span>
+            </div>
+            <div class="input">
+                <select name="depot_id" id="gest_depot" required>
+                    <option selected disabled>Sélectionnez le dépôt de gestion</option>
+                    {% for depot in depots %}
+                        <option value="{{ depot.id }}" {{ form.data.depot.id == depot.id ? 'selected' : '' }}>{{ depot.id|zerolead ~ " " ~ depot.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="fieldset">
+            <div class="button">
+                <button type="reset" class="button2">Annuler</button>
+                <button type="submit" class="button1">{{ form.contextMessage }} le Gestionnaire</button>
+            </div>
+        </div>
+    </form>
+{% endblock form %}

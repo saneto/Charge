@@ -1,0 +1,2 @@
+App\Entity\Doctrine\VendorUserEntity:
+  type: entity

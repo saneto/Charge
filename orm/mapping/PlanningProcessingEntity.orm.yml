@@ -1,0 +1,57 @@
+App\Entity\Doctrine\PlanningProcessingEntity:
+  type: entity
+  table: plannings_processings
+  inheritanceType: JOINED
+  discriminatorColumn:
+    name: from_table
+    type: string
+  discriminatorMap:
+    cdep: App\Entity\Doctrine\PlanningProcessingEntity
+    plnc: App\Entity\Doctrine\PlanningChargeEntity
+  id:
+    id:
+      type: string
+      generator:
+        strategy: AUTO
+  fields:
+    original_quantity:
+      type: integer
+      options:
+        unsigned: true
+    commandes_quantity:
+      type: integer
+      options:
+        unsigned: false
+    to_ilots:
+      type: text
+    quantity:
+      type: integer
+      column: remaining_quantity
+      nullable: true
+      options:
+        unsigned: true
+        default: 0
+    date:
+      type: date
+      column: quantity_at
+    orphan:
+      type: boolean
+  manyToOne:
+    planning:
+      targetEntity: App\Entity\Doctrine\PlanningEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumns:
+        planning_id:
+          referencedColumnName: id
+    charge:
+      targetEntity: App\Entity\Doctrine\PlanningChargeEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumns:
+        charge_id:
+          referencedColumnName: id

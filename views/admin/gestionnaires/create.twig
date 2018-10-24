@@ -1,0 +1,45 @@
+{% extends "admin/layout.tpl.twig" %}
+
+{% block title %}Nouveau Gestionnaire{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+{% endblock css %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('admin/gestionnaires/index.twig', path_for('admin.gestionnaires.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">Création d'un nouveau Gestionnaire</h2>
+        </div>
+
+        <div class="tkmf_block-text">
+            {% include "admin/gestionnaires/form.inc.twig" %}
+        </div>
+    </div>
+    <div class="theme-col-small">
+        {% include "admin/gestionnaires/form_help.inc.twig" %}
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">Les autres Gestionnaires</h2>
+            {% if series is not empty %}
+            <ul>
+                {% for serie in series %}
+                    <li class="icon-tk-file-document">
+                        <span class="app_label">Gestionnaire</span>
+                        <a href="{{ path_for('admin.gestionnaires.edit', { serie_id: serie.id }) }}" title="Ouvrir Gestionnaire {{ serie|serie_label(false) }}">{{ serie|raw }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="app_empty-block">Il n'y a pas de série enregistrés ...</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

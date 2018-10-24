@@ -1,0 +1,53 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Création d'un nouvel Îlot{% endblock title %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('admin/ilots/index.twig', path_for('admin.ilots.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+    <link rel="stylesheet" href="js/lib/wheelcolorpicker/wheelcolorpicker.css">
+    <link rel="stylesheet" href="js/lib/select2/select2.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/wheelcolorpicker/wheelcolorpicker.min.js"></script>
+{% endblock script %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="tkmf_block-text">
+            {% include "admin/ilots/form.inc.twig" %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        {% include "admin/ilots/form_help.inc.twig" %}
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">Les autres Îlots</h2>
+            {% if ilots is not empty %}
+            <ul>
+                {% for ilot in ilots %}
+                    <li class="icon-tk-settings">
+                        <span class="app_label">Îlot</span>
+                        <a href="{{ path_for('admin.ilots.edit', { ilot_name: ilot.name }) }}" title="Modifier l'Îlot {{ ilot }}">{{ ilot.name }}</a>
+                        <span class="app_label">({{ ilot.label }})</span>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="app_empty-block">Il n'y a pas d'îlots enregistrés ...</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

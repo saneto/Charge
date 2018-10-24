@@ -1,0 +1,45 @@
+<form action="{{ form.action }}" method="{{ form.method }}">
+    <input type="hidden" name="_METHOD" value="{{ form.xmethod ?? form.method }}">
+
+    <div class="fieldset">
+        <div class="label">
+            <label for="label">Nom du planning:</label>
+            <span><small>(obligatoire)</small></span>
+        </div>
+        <div class="input">
+            <input type="text" name="label" id="label"
+                   placeholder="Nom du planning qui sera visible par tous" value="{{ form.data.label }}" required>
+        </div>
+    </div>
+
+    <div class="fieldset">
+        <div class="label">
+            <label for="color">Couleur du planning:</label>
+        </div>
+        <div class="input">
+            <input type="text" id="color" name="color" placeholder="Couleur du planning"
+                   value="{{ form.data.color }}" autocomplete="off"
+                   data-wheelcolorpicker data-wcp-sliders="wv" data-wcp-preview="true" required>
+        </div>
+    </div>
+
+    <div class="fieldset">
+        <div class="label">
+            <label for="series">Gestionnaires:</label>
+        </div>
+        <div class="input">
+            <select name="series[]" id="series" class="js-select2" multiple="multiple">
+                {% for serie in series %}
+                    <option value="{{ serie.id }}" {{ serie.id in planningSeries ? "selected" : "" }}>{{ serie|serie_label(false) }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="fieldset">
+        <div class="button">
+            <button type="button" class="button2">Annuler</button>
+            <button type="submit" class="button1">{{ form.contextMessage }} le planning</button>
+        </div>
+    </div>
+</form>

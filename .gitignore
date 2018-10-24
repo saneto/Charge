@@ -1,0 +1,12 @@
+.idea/
+cache/
+logs/
+vendor/
+socketio/node_modules/
+
+web/js/lib/fullcalendar/*/
+web/js/lib/select2/*/
+
+composer.lock
+routes.yml.php
+/src/App/Controller/PlanningController.php

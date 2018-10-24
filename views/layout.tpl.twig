@@ -1,0 +1,118 @@
+<!-- {{ app.title }} a été développée avec ❤ par {{ app.developers|join(', ') }} -->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height">
+
+    <title>{% block title %}{% endblock title %} - tkMF {{ app.title }}</title>
+    <base href="{{ base_url() }}">
+
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="../web/tk_css/css/tk.min.css">
+    <link rel="stylesheet" href="../web/tk_css/css/tk_fixe_tkmf.css">
+    <link rel="stylesheet" href="../web/css/app.css">
+
+    {% block css %}{% endblock css %}
+</head>
+<body>
+
+<div id="wrapper">
+
+    <div id="toasts"></div>
+
+    <header id="header">
+        <div class="head">
+            <div class="metanavi">
+                <ul class="meta-links">
+                    <li><a href="https://we-net.thyssenkrupp.com">we.net</a></li>
+                </ul>
+                <ul class="intranet-links">
+                    <li class="settings">
+                        <a href="{{ path_for('admin.index') }}">Administration</a>
+                    </li>
+                </ul>
+                <div class="userdata">
+                    <div class="userimg">
+                        <div class="image-wrapper">
+                            <img src="{{ user.avatar }}" alt="{{ user }}">
+                        </div>
+                    </div>
+                    <a href="{{ path_for('accounts.add_vme_id', { user_id: user.id }) }}">{{ user }} <small>({{ user.role }})</small></a>
+                    <div class="logout">
+                        <a href="{{ path_for('logout') }}" class="vertical-bar">Déconnexion</a>
+                    </div>
+                </div>
+            </div>
+            <h1 class="we-letters">
+                <span class="tkmf_espace">espace</span>
+                tkMF <span>{{ app.title }}</span>
+            </h1>
+            <span id="logo">thyssenkrupp Materials France</span>
+        </div>
+
+        <div class="mainnavi desktop-navi">
+            <div class="menu-wrapper">
+                <ul>
+                    {#<li><a href="{{ path_for('root') }}" {{ active_menu('accueil') }}>accueil</a></li>#}
+                    <li><a href="{{ path_for('commandes.index') }}" {{ active_menu('commandes') }}>commandes</a></li>
+                    <li><a href="{{ path_for('gestionnaires.index') }}" {{ active_menu('gestionnaires') }}>gestionnaires</a></li>
+                    <li><a href="{{ path_for('plannings.index') }}" {{ active_menu('plannings') }}>plannings de charge</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bcwrapper">
+            {% block breadcrumb %}
+                <ul>
+                    <li>{{ block('title') }}</li>
+                </ul>
+            {% endblock breadcrumb %}
+        </div>
+    </header>
+
+    <div id="content">
+        <div class="container">
+            {% block flash_messages %}
+                {% for type, messages in flash %}
+                    <div class="theme-col-all">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endblock flash_messages %}
+
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+
+    <footer id="footer">
+        <div>
+            <div>
+                <p class="headline">
+                    <span>tkMF</span>
+                    <span>{{ app.title }}</span>
+                </p>
+            </div>
+        </div>
+        <aside id="metainfo">
+            <div>
+                <div class="copyright">Copyright by thyssenkrupp Materials France © {{ "now"|date('Y') }}</div>
+            </div>
+        </aside>
+    </footer>
+</div>
+
+{% block script %}
+    <script type="application/javascript" src="js/lib/jquery.min.js"></script>
+    <script type="application/javascript" src="js/lib/jquery-ui/jquery-ui.min.js"></script>
+    <script type="application/javascript" src="js/lib/jquery-ui/datepicker-fr.min.js"></script>
+    <script type="application/javascript" src="js/lib/moment.min.js"></script>
+    <script type="application/javascript" src="js/app.js"></script>
+{% endblock script %}
+
+</body>
+</html>

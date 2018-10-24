@@ -1,0 +1,91 @@
+{% extends 'layout.tpl.twig' %}
+
+{% set colors = {
+    event: ilot.color,
+    text: ilot.color|reverse_color
+} %}
+
+{% block title %}Planning de l'ilôt "{{ ilot }}"{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="js/lib/fullcalendar/fullcalendar.min.css">
+{% endblock css %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('planning/index.twig', path_for('planning.index')) }}</li>
+        <li><a href="{{ path_for('planning.index') }}">{{ depot }}</a></li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="load_planning alert alert-info">Récupération des évènements du planning...</div>
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">{{ block('title') }}</h2>
+            <div id="planning_depot" data-holidays="{{ path_for('events.holidays') }}" data-events="{{ path_for('planning.ilots_events', { ilot_name: ilot.name }) }}" data-colors='{{ colors|json_encode|raw }}'></div>
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <button id="open_modal_add-event" class="button1 tkmf_btn-block">Ajouter une disponibilité</button>
+        </div>
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">Détails sur cet ilôt</h2>
+            <ul>
+                <li class="pin inline-title"><span class="app_label">Emplacement:</span> <span title="{{ depot }}">{{ depot }}</span></li>
+                <li class="tag"><span class="app_label">Identifiant VME:</span> {{ ilot.name }}</li>
+                <li class="info"><span class="app_label">Dénomination:</span> {{ ilot.label }}</li>
+                <li class="wreck"><span class="app_label">Utilisation:</span>
+                    <a href="{{ path_for('gestionnaires.reserve', { serie_id: ilot.serie.id }) }}" title="Ouvrir le Gestionnaire {{ ilot.serie|serie_label(false) }}" target="_blank">Série {{ ilot.serie|raw }}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tkmf_block-text">
+            <h2 class="headline inline-title" title="{{ depot }}">Les autres ilôts de <small>{{ depot }}</small></h2>
+            <ul>
+                {% if nearest_ilots is not empty %}
+                    {% for nilot in nearest_ilots %}
+                        <li class="link"><a href="{{ path_for('planning.ilot_single', { ilot_name: nilot.name }) }}">{{ nilot }}</a></li>
+                    {% endfor %}
+                {% else %}
+                    <li><span class="app_label">Aucun autre ilôt sur le même dépôt...</span></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    {# Modal d'ajout d'un événement au planning #}
+    {% include "modals/event_add.inc.twig" with {
+        modal: {
+            id: "modal_pln_event-add",
+            title: "Ajouter une disponibilité",
+            action: path_for('planning.create_ilot_event', { ilot_name: ilot.name })
+        }
+    } %}
+
+    {# Modal de modification d'un événement au planning #}
+    {% include "modals/event_edit.inc.twig" with {
+        modal: { id: "modal_pln_event-edit", title: "Modifier une disponibilité" }
+    } %}
+
+    {% include "modals/commande_charges.inc.twig" with {
+        modal: { id: "modal_pln_commande-charge", title: "Détails des prélèvements" }
+    } %}
+
+{% endblock content %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/moment.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/locale/fr.js"></script>
+    <script type="application/javascript" src="js/app/planning-fullcalendar.js"></script>
+{% endblock script %}

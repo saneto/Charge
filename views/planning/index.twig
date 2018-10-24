@@ -1,0 +1,63 @@
+
+
+
+{% extends "layout.tpl.twig" %}
+{% block title %}Plannings de Charge{% endblock %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/mansory/mansory.min.js"></script>
+
+    <script type="application/javascript">
+        $(document).ready(function () {
+            var $grid = $('#grid_depots').masonry({
+                gutter: 16,
+                fitWidth: true,
+                horizontalOrder: true,
+                itemSelector: '.grid-item'
+            });
+        });
+    </script>
+{% endblock script %}
+
+{% block content %}
+    {% if ilots_count == 0 %}
+        <div class="theme-col-all">
+            <div class="tkmf_block-text">
+                <p class="app_empty-block">Il n'y a pas de plannings enregistré ...</p>
+            </div>
+        </div>
+    {% else %}
+        <div id="grid_depots">
+            {# On parcours chaque dépôt #}
+            {% for depot in depots %}
+                {% if ilots[depot.id] is not empty %}
+                    <div class="grid-item" style="width: 320px;">
+                        <div class="tkmf_block-text app_planning-depot {{ depot.open ? 'open' : 'closed' }}">
+                            <h2 class="app_empty-block">{{ depot.name }}</h2>
+                            <p class="app_empty-block">Identifiant du dépôt VME: <small class="app_label">{{ depot.id|zerolead }}</small></p>
+                        </div>
+
+                        <div class="app_planning-ilot-container">
+                            {#{% if ilots[depot.id] is not empty %}#}
+                                {% for ilot in ilots[depot.id] %}
+                                    <div class="tkmf_block-text app_planning-ilot-content" style="border-color: {{ ilot.color }};">
+                                        <h3 class="inline-title app_empty-block">{{ ilot.label }}</h3>
+                                        <p>Identifiant de l'ilot VME: <small class="app_label">{{ ilot.name }}</small></p>
+                                        <p>
+                                            <a href="{{ path_for('planning.ilot_single', { depot_id: depot.id|zerolead, ilot_name: ilot.name }) }}" class="button1 tkmf_btn-block">Consulter ce planning</a>
+                                        </p>
+                                    </div>
+                                {% endfor %}
+                            {#{% else %}#}
+                                {#<div class="theme-col-all">#}
+                                    {#<div class="tkmf_block-text">Aucun ilôt trouvé pour ce dépôt...</div>#}
+                                {#</div>#}
+                            {#{% endif %}#}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock content %}

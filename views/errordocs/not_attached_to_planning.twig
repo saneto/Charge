@@ -1,0 +1,14 @@
+{% extends "exception.tpl.twig" %}
+
+{% block content %}
+    <p class="details">
+        Aucun planning n'est attaché au Gestionnaire {{ serie|serie_label(false) }}.<br>
+        En conséquence, l'accès est bloqué.
+    </p>
+    <ul>
+        <li>Pour résoudre le problème,
+        contactez un responsable pour qu'il attache le Gestionnaire {{ serie|serie_label(false) }} à un planning.</li>
+
+        <li>Si vous êtes autorisé, <a href="{{ path_for('admin.plannings.index') }}">cliquez directement ici pour ajouter le Gestionnaire {{ serie|serie_label(false) }}</a>.</li>
+    </ul>
+{% endblock content %}

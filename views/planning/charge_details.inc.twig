@@ -1,0 +1,20 @@
+<div class="app_planning_commande-charge-wrapper">
+    {% if fromCharge.charge is null %}
+        <div class="text-danger">Il n'y a pas de disponibilité dans le Planning à la date du {{ fromCharge.date|date('d/m/Y') }}.</div>
+    {% else %}
+        <div class="alert alert-small" style="background-color: {{ fromCharge.ilot.color }}; color: {{ fromCharge.ilot.color|reverse_color }};">
+            <b>{{ fromCharge.ilot.name }}:</b>
+            {{ fromCharge.originalQuantity }} pièces au {{ fromCharge.date|date('d/m/Y') }}</div>
+        <a href="{{ jsonCharge.url }}" id="editCharge" class="text-center" data-charge="{{ jsonCharge|json_encode }}" style="display: block; margin-top: 4px;">Modifier</a>
+    {% endif %}
+    <hr>
+    {% for line in charges %}
+        <div class="app_planning_commande-charge">
+            <div class="date">{{ line.bill.createdAt|date('d/m/Y \\à H\\hi') }} - <a href="{{ path_for('commandes.details', { bill_id: line.bill.id }) }}">{{ line.bill.id }}</a></div>
+            <div class="app_planning_commande-charge_container">
+                <a href="{{ path_for('accounts.index', { user_id: line.bill.vendor.id }) }}">{{ line.bill.vendor }} ({{ line.bill.vendor.vme_id }})</a>
+                a prélevé <b>{{ line.quantity }} pièces</b>
+            </div>
+        </div>
+    {% endfor %}
+</div>

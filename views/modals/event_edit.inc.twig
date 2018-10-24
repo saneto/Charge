@@ -1,0 +1,22 @@
+{% extends "modals/modal.tpl.twig" %}
+
+{% block content %}
+    <form action="#" method="post" id="form_{{ modal.id }}" class="modal-form">
+        <input type="hidden" name="_METHOD" value="PUT">
+
+        <div class="modal-errors"></div>
+        <div>
+            <label for="eventEditQuantity">Modifier la quantité:</label>
+            <div>
+                <input type="text" id="eventEditQuantity" name="quantity" maxlength="3" placeholder="Saisir quantité" style="width: 120px; margin-right: 8px;">
+                <span>pièces</span>
+            </div>
+        </div>
+        <div>
+            <label for="eventEditQuantityAt">Déplacer à la date du:</label>
+            <div>
+                <input type="text" id="eventEditQuantityAt" name="quantity_at" class="datepicker">
+            </div>
+        </div>
+    </form>
+{% endblock content %}

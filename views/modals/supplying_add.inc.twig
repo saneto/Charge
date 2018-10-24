@@ -1,0 +1,49 @@
+{% extends "modals/modal.tpl.twig" %}
+
+{% block content %}
+    <form action="#" method="get" id="form_{{ modal.id }}" class="modal-form">
+        <div class="modal-errors"></div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="to_ilot">Îlot:</label>
+            </div>
+            <div class="input" style="width: 200px;">
+                <select name="to_ilot" id="ilots">
+                    <option value="0" id="choose_ilot" selected disabled>Sélectionnez un îlot de traitement</option>
+                    {% for depot in depots %}
+                        {% if ilots[depot.id] is not empty %}
+                            <optgroup label="{{ depot }}">
+                                {% for ilot in ilots[depot.id] %}
+                                    <option value="{{ ilot.id }}" data-ilot="{{ ilot|json_encode }}">{{ ilot.name ~ " " ~ ilot.label }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="add_quantity">Quantité:</label>
+            </div>
+            <div class="input" style="width: 200px;">
+                <input type="number" min="1" max="999" name="quantity" id="add_quantity">
+            </div>
+        </div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="depots">Dépôt de <abbr title="prélèvement">prlv</abbr>:</label>
+            </div>
+            <div class="input" style="width: 200px;">
+                <select name="depots" id="depots">
+                    {% for depot in depots %}
+                        <option value="{{ depot.id|zerolead }}">{{ depot }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+{% endblock content %}

@@ -1,0 +1,202 @@
+{% extends "layout.tpl.twig" %}
+{% block title %}Réservation Série {{ serie|serie_label(false) }}{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="js/lib/fullcalendar/fullcalendar.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/moment.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/locale/fr.js"></script>
+    <script type="application/javascript" src="js/app/gestionnaires-reserve.js"></script>
+{% endblock script %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('gestionnaires/index.twig', path_for('gestionnaires.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-small">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">Série {{ serie|raw }}</h2>
+        </div>
+
+        <div class="tkmf_block-text">
+            <h2>Votre numéro de BL:</h2>
+            <div class="app_numero-bl">{{ starter }}</div>
+        </div>
+    </div>
+
+    <div class="theme-col-wide">
+        <form action="{{ path_for('commandes.create', { serie_id: serie.id }) }}" method="post" id="form_gst-reserve">
+            <input type="hidden" name="_METHOD" value="PUT">
+            <input type="hidden" name="bl_id" value="{{ starter.id }}">
+
+            <div class="tkmf_block-text">
+                <h2>Informations de la Commande:</h2>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="bill_id">N° de devis tkMF: <small>(obligatoire)</small></label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="bill_id" name="bill_id" placeholder="Numéro de cde interne tkMF" required>
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="cas_type">N° de CAS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="cas_type" name="cas_type" placeholder="Numéro de CAS">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="machine_ts">Machine TS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="machine_ts" name="machine_ts" placeholder="Machine Travaux Spéciaux">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="depart_ts">Date départ TS:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="depart_ts" name="depart_ts" placeholder="Date de départ Travaux Spéciaux" class="datepicker text-left" disabled>
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="sous_traitant">Sous-traitant:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="sous_traitant" name="sous_traitant" placeholder="Sous-traitant de la commande">
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="transporteur">Transporteur:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="transporteur" name="transporteur" placeholder="Transporteur">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tkmf_block-text">
+                <h2>Informations sur le Client:</h2>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="client_name">Nom du client: <small>(obligatoire)</small></label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="client_name" name="client_name" placeholder="Numéro du client ou son nom" required>
+                    </div>
+                </div>
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="client_reference">Réf. cde client: <small>(obligatoire)</small></label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="client_reference" name="client_reference" placeholder="Référence cde chez le client" required>
+                    </div>
+                </div>
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="date_livraison">Date de livraison:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="date_livraison" name="date_livraison" placeholder="Date de livraison Client" class="datepicker text-left">
+                    </div>
+                </div>
+            </div>
+
+            <div class="tkmf_block-text">
+                <h2>Prélèvements des pièces:</h2>
+                <div id="gst-reserve_fullcalendar" data-holidays="{{ path_for('events.holidays') }}" data-events="{{ path_for('gestionnaires.ilots_events', { serie_id: serie.id }) }}"></div>
+
+                <div style="margin-top: 8px;">
+                    <div id="dateDepartCommande">
+                        <b>Date de départ</b>:<br>
+                        <span data-depart="">--/--/----</span>
+                    </div>
+                    <div>
+                        <b>Vos prélèvements sont indiqués par les bandeaux <span class="tk-blue"><span class="icon-tk-download"></span></span> dans le calendrier ci-dessus.</b>
+                    </div>
+                    <div>
+                        Total des prélèvements: <span class="tk-blue"><span id="count_supplying" class="icon-tk-download" data-count="0">0</span> pièces</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tkmf_block-text">
+                <h2>Suivis de la commande:</h2>
+
+                <table class="tk-table">
+                    <thead>
+                        <tr>
+                            <th width="5%"></th>
+                            <th width="20%">Type du suivi</th>
+                            <th width="60%">Commentaire</th>
+                            <th width="15%">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_gst-reserve_comments">
+                        <tr>
+                            <td colspan="4">Aucun suivi n'a été ajouté pour le moment...</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <a href="#" id="href_gst-reserve_comment-add" class="icon-tk-plus">Ajouter un suivi</a>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="tkmf_block-text">
+                <div class="fieldset">
+                    <div class="button">
+                        <button type="button" class="button2">Annuler</button>
+                        <button type="submit" class="button1" id="form_submit" disabled>Valider la commande</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="modal_success" title="Confirmation de saisie" data-location="{{ path_for('gestionnaires.index') }}">
+        <div class="alert alert-success">Votre commande a bien été saisie !</div>
+    </div>
+
+    {% include "modals/supplying_add.inc.twig" with {
+        modal: { id: "modal_gst-reserve_supplying-add", title: "Effectuer un prélèvement" }
+    } %}
+
+    {% include "modals/comment_add.inc.twig" with {
+        modal: { id: "modal_gst-reserve_comment-add", title: "Ajouter un suivi commande" }
+    } %}
+
+    {% include "modals/comment_edit.inc.twig" with {
+        modal: { id: "modal_gst-reserve_comment-edit", title: "Modifier un suivi commande" }
+    } %}
+
+{% endblock %}

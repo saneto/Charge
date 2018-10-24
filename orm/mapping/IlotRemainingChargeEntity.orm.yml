@@ -1,0 +1,54 @@
+App\Entity\Doctrine\IlotRemainingChargeEntity:
+    type: entity
+    table: ilots_processing_charge
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            generator:
+                strategy: UUID
+    fields:
+        charge:
+            type: integer
+            nullable: true
+            column: charge_id
+            options:
+              unsigned: false
+        original_quantity:
+            type: integer
+            nullable: true
+            options:
+              default: '0'
+        commandes_quantity:
+            type: integer
+            nullable: true
+            options:
+              default: null
+        remaining_quantity:
+            type: integer
+            nullable: true
+            options:
+              default: null
+        quantity_at:
+            type: date
+            nullable: true
+            options:
+              default: null
+        from_table:
+            type: string
+            nullable: false
+            options:
+              collation: utf8mb4_unicode_ci
+    manyToOne:
+        ilot:
+            targetEntity: App\Entity\Doctrine\IlotEntity
+            cascade: {  }
+            fetch: LAZY
+            inversedBy: id
+            joinColumns:
+                ilot_id:
+                    referencedColumnName: id
+            orphanRemoval: false

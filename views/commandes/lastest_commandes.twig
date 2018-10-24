@@ -1,0 +1,30 @@
+{% extends "commandes/index.twig" %}
+
+{% block commandes_content %}
+    <div class="tkmf_block-text">
+        <h2 class="headline-empty">Les dernières commandes enregistrées</h2>
+    </div>
+
+    {% if commandes.count > 0 %}
+        <div class="tkmf_block-empty app_block-float">
+            {% if next >= 0 %}
+                <div class="app_block-left">
+                    <a href="{{ path_for('commandes.index') }}?p={{ next }}"><span class="icon-tk-prev"></span>{{ max }} suivantes</a>
+                </div>
+            {% endif %}
+            {% if prev >= 0 %}
+                <div class="app_block-right">
+                    <a href="{{ path_for('commandes.index') }}?p={{ prev }}">{{ max }} précédentes<span class="icon-tk-next"></span></a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="tkmf_block-text">
+            {% include "commandes/commandes_resumes.twig" %}
+        </div>
+    {% else %}
+        <div class="tkmf_block-text">
+            <p class="app_empty-block">Il n'y a pas de commande enregistrée ...</p>
+        </div>
+    {% endif %}
+{% endblock commandes_content %}

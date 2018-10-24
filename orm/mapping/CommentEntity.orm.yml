@@ -1,0 +1,48 @@
+App\Entity\Doctrine\CommentEntity:
+  type: entity
+  table: commandes_comments
+  id:
+    id:
+      type: integer
+      nullable: false
+      options:
+        unsigned: true
+      id: true
+      generator:
+          strategy: IDENTITY
+  fields:
+    text:
+      type: text
+      nullable: true
+      column: comment_text
+    date:
+      type: date
+      nullable: true
+      column: comment_date
+    created_at:
+      type: datetime
+      nullable: false
+  manyToOne:
+    type:
+      targetEntity: App\Entity\Doctrine\CommentTypeEntity
+      mappedBy: type
+      cascade: [ persist ]
+      joinColumn:
+        name: comment_type
+        referencedColumnName: type
+    bill:
+      targetEntity: App\Entity\Doctrine\CommandeEntity
+      inversedBy: comments
+      joinColumn:
+        name: bill_id
+        referencedColumnName: id
+    author:
+      targetEntity: App\Entity\Doctrine\UserEntity
+      cascade: {}
+      fetch: LAZY
+      mappedBy: id
+      column: commented_by
+      joinColumns:
+        commented_by:
+          referencedColumnName: id
+      orphanRemoval: false

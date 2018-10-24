@@ -1,0 +1,95 @@
+App\Entity\Doctrine\IlotEntity:
+    type: entity
+    table: ilots
+    indexes:
+        fk_ilots_depots1_idx:
+            columns:
+                - location
+    uniqueConstraints:
+        name_UNIQUE:
+            columns:
+                - name
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 45
+            options:
+                fixed: false
+                comment: 'Nom de l''ilot dans VME'
+        label:
+            type: string
+            nullable: true
+            length: 45
+            options:
+                fixed: false
+                comment: 'Nom courant pour désigner l''ilot'
+        color:
+            type: string
+            nullable: true
+            length: 7
+            options:
+                fixed: false
+                comment: 'Couleur permettant d''identifier ses évènements sur le planning'
+        dx:
+        dy:
+        dz:
+          type: integer
+          nullable: true
+          options:
+            unsigned: true
+            default: 0
+    manyToMany:
+      plannings:
+        targetEntity: App\Entity\Doctrine\PlanningEntity
+        fetch: LAZY
+        cascade: [ persist ]
+        joinTable:
+          name: plannings_ilots
+          joinColumns:
+            ilot_id:
+              referencedColumnName: id
+          inverseJoinColumns:
+            planning_id:
+              referencedColumnName: id
+#    manyToMany:
+#      plannings:
+#        targetEntity: App\Entity\Doctrine\PlanningIlotEntity
+#        fetch: LAZY
+#        cascade: [ persist ]
+#        joinTable:
+#          name: plannings_ilots
+#          joinColumns:
+#            ilot_id:
+#              referencedColumnName: id
+#          inverseJoinColumns:
+#            planning_id:
+#              referencedColumnName: id
+    manyToOne:
+        location:
+            targetEntity: App\Entity\Doctrine\DepotEntity
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: id
+            joinColumns:
+                location:
+                    referencedColumnName: id
+            orphanRemoval: false
+#        serie:
+#            targetEntity: App\Entity\Doctrine\SerieEntity
+#            cascade: {  }
+#            fetch: LAZY
+#            mappedBy: id
+#            joinColumns:
+#                serie_id:
+#                    referencedColumnName: id
+#            orphanRemoval: false

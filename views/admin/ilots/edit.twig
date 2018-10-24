@@ -1,0 +1,77 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Modification de l'Îlot {{ ilot }}{% endblock title %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('admin/ilots/index.twig', path_for('admin.ilots.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+    <link rel="stylesheet" href="js/lib/wheelcolorpicker/wheelcolorpicker.css">
+    <link rel="stylesheet" href="js/lib/select2/select2.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/wheelcolorpicker/wheelcolorpicker.min.js"></script>
+    <script type="application/javascript">
+        $(document).ready(function () {
+            var $color = $('#color');
+
+            $color.on('slidermove', function () {
+                $('#color_ilot').css('border-color', "#" + $color.val());
+            });
+        });
+    </script>
+{% endblock script %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div id="color_ilot" class="tkmf_block-text" style="border-bottom: 4px solid {{ ilot.color }};">
+            <h2 class="headline-empty">Informations sur l'Îlots {{ ilot }}</h2>
+        </div>
+        <div class="tkmf_block-text">
+            {% include "admin/ilots/form.inc.twig" %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.ilots.delete', { ilot_name: ilot.name }) }}" data-location="{{ path_for('admin.ilots.index') }}" id="removeIlot" class="button2 delete-hard tkmf_btn-block">Supprimer l'Îlot</a>
+        </div>
+
+        {% if ilot.plannings is not empty %}
+            <div class="tkmf_block-text">
+                <h2 class="headline">Attaché aux plannings</h2>
+                <ul>
+                    {% for planning in ilot.plannings %}
+                        <li class="calendar"><a href="{{ path_for('admin.plannings.edit', { planning_slug: planning.slug }) }}">{{ planning }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="tkmf_block-empty">
+                <div class="alert alert-warning">Cet îlot est orphelin. Pensez à l'attacher un planning !</div>
+            </div>
+        {% endif %}
+
+        {% include "admin/ilots/form_help.inc.twig" %}
+
+        <div class="tkmf_block-text">
+            <h2 class="headline">Aide</h2>
+
+            <ul>
+                <li class="attention">
+                    L'identifiant de l'îlot ne peut pas être modifié.
+                </li>
+                <li class="info">
+                    <b>Suppression impossible ?</b>
+                    L'îlot {{ ilot }} a été utilisé pour créer une commande...
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,28 @@
+App\Entity\Doctrine\PlanningIlotEntity:
+  type: entity
+  table: plannings_ilots
+  fields:
+    id:
+      type: integer
+      id: true
+      generator:
+        strategy: AUTO
+  manyToOne:
+    planning:
+      targetEntity: App\Entity\Doctrine\PlanningEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumns:
+        planning_id:
+          referencedColumnName: id
+    ilot:
+      targetEntity: App\Entity\Doctrine\IlotEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumns:
+        ilot_id:
+          referencedColumnName: id

@@ -1,0 +1,28 @@
+{% extends "layout.tpl.twig" %}
+{% block title %}Liste des plannings{% endblock title %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="row">
+            {% if plannings is not empty %}
+                {% for planning in plannings %}
+                    <div class="theme-col-small">
+                        <div class="tkmf_block-text app_planning-ilot-content" style="border-color: {{ planning.color }};">
+                            <h3 class="inline-title" title="Planning {{ planning }}">Planning "{{ planning }}"</h3>
+                            {{ render_tips(planning) }}
+                            <a href="{{ path_for('plannings.single', { planning_slug: planning.slug }) }}" class="button1 tkmf_btn-block">Consulter le planning</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="tkmf_block-text">
+                    <p class="headline-empty">Il n'y a pas de planning disponible ...</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

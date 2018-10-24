@@ -1,0 +1,261 @@
+# Fichier de déclaration des routes de l'application.
+# @author Gaëtan Simon <gaetan.simon@thyssen.fr>
+
+# options:
+#   namespaces:
+#     callables: "Namespace par défaut à utiliser pour chaque callable"
+#     middlewares: "Namespace par défaut à utiliser pour chaque middleware"
+#   callables:
+#     suffix: "Suffix devant chaque méthode à appeler dans le callable"
+#     prefix: "Préfix après chaque méthode à appeler dans le callable"
+
+# routes:
+#   route_name:
+#     pattern: "Chemin d'accès de l'URL"
+#     methods:
+#       - Tableau YAML avec des méthodes HTTP autorisées (ex: GET)
+#       - ...
+#     callable: "Nom du Controller et de la méthode à appeler (ex: MyController:hello). Si un backslash (\) précède le callable, le namespace "options.namespaces.callables" ne sera pas utilisé."
+#     middlewares:
+#       - Tableau YAML avec les Middlewares de la Route qui doivent être appelés.
+
+options:
+  namespaces:
+    callables: App\Controller
+    middlewares: App\Middleware
+  callables:
+    prefix: "Action"
+
+routes:
+  root:
+    pattern: "/"
+    methods: [ GET ]
+#    callable: IndexController:index
+    callable: GestionnaireController:index
+
+  login:
+    pattern: "/login"
+    methods: [ GET ]
+    callable: LoginController:index
+
+  logout:
+    pattern: "/logout"
+    methods: [ GET ]
+    callable: LoginController:logout
+
+  commandes_group:
+    pattern: "/commandes"
+    routes:
+      commandes.index:
+        pattern: ""
+        methods: [ GET ]
+        callable: CommandesController:index
+      commandes.create:
+        pattern: "/series/{serie_id:[0-9]+}"
+        methods: [ PUT ]
+        callable: CommandesController:create
+      commandes.details:
+        pattern: "/details/{bill_id:[0-9]+}"
+        methods: [ GET ]
+        callable: CommandesController:details
+      commandes.update:
+        pattern: "/details/{bill_id:[0-9]+}"
+        methods: [ PUT ]
+        callable: CommandesController:update
+        # middlewares: [ AdminRolesMiddleware ]
+      commandes.charges.update:
+        pattern: "/charges/{charge_id:[0-9]+}"
+        methods: [ GET, PUT ]
+        callable: CommandesController:updateCharge
+      commandes.cancel:
+        pattern: "/cancel/{bill_id:[0-9]+}"
+        methods: [ GET ]
+        callable: CommandesController:cancel
+      commandes.comment.add:
+        pattern: "/{bill_id:[0-9]+}/comments"
+        methods: [ POST ]
+        callable: CommandesController:addComment
+
+
+  accounts.add_vme_id:
+    pattern: "/myaccount/vme"
+    methods: [ GET, PUT ]
+    callable: Account\AccountController:addVmeId
+  accounts_group:
+    pattern: "/accounts"
+    routes:
+      accounts.index:
+        pattern: "/{user_id:[a-zA-A0-9]+}"
+        methods: [ GET ]
+        callable: Account\AccountController:index
+
+  gestionnaires_group:
+    pattern: "/gestionnaires"
+    routes:
+      gestionnaires.index:
+        pattern: ""
+        methods: [ GET ]
+        callable: GestionnaireController:index
+      gestionnaires.reserve:
+        pattern: "/{serie_id:[0-9]+}"
+        methods: [ GET ]
+        callable: GestionnaireController:reserve
+      gestionnaires.reserve_commande:
+        pattern: "/{serie_id:[0-9]+}"
+        methods: [ POST ]
+        callable: Commande\CommandeController:create
+      gestionnaires.ilots_quantities:
+        pattern: "/{serie_id:[0-9]+}/ilots"
+        methods: [ GET ]
+        callable: GestionnaireController:ilotsQuantities_ajax
+      gestionnaires.ilots_events:
+        pattern: "/{serie_id:[0-9]+}/events"
+        methods: [ GET ]
+        callable: GestionnaireController:ilotsEvents_ajax
+
+  plannings_group:
+    pattern: "/plannings"
+    routes:
+      plannings.index:
+        pattern: ""
+        methods: [ GET ]
+        callable: PlanningsController:index
+      plannings.single:
+        pattern: "/{planning_slug:[a-z\\-]+}"
+        methods: [ GET ]
+        callable: PlanningsController:single
+      plannings.charge.details:
+        pattern: "/{charge_id:[a-z0-9]+}"
+        methods: [ GET ]
+        callable: PlanningsController:chargeDetails
+      plannings_single_group:
+        pattern: "/{planning_id:[0-9]+}"
+        routes:
+          plannings.single_events:
+            pattern: "/events"
+            methods: [ GET ]
+            callable: PlanningsController:singleEvents
+          plannings.single_charge_details:
+            pattern: "/events/{charge_id:[0-9]+}"
+            methods: [ GET ]
+            callable: PlanningsController:singleChargeDetails
+      plannings_charge_crud_group:
+        pattern: "/events"
+        middlewares: [ AjaxRequestMiddleware ]
+        routes:
+          plannings.charge_create:
+            pattern: ""
+            methods: [ POST ]
+            callable: PlanningsController:addCharge
+          plannings.charge_update:
+            pattern: "/{charge_id:[0-9]+}"
+            methods: [ PUT ]
+            callable: PlanningsController:editCharge
+          plannings.charge_delete:
+            pattern: "/{charge_id:[0-9]+}"
+            methods: [ DELETE ]
+            callable: PlanningsController:removeCharge
+
+  events_group:
+    pattern: "/events"
+    routes:
+      events.holidays:
+        pattern: "/holidays"
+        methods: [ GET ]
+        callable: EventsController:holidays
+      events.event_single:
+        pattern: "/{event_id:[0-9]+}"
+        methods: [ GET ]
+        callable: EventsController:resume
+      events.update:
+        pattern: "/{event_id:[0-9]+}"
+        methods: [ PUT ]
+        callable: EventsController:update
+        middlewares: [ AjaxRequestMiddleware ]
+      events.delete:
+        pattern: "/{event_id:[0-9]+}"
+        methods: [ DELETE ]
+        callable: EventsController:delete
+        middlewares: [ AjaxRequestMiddleware ]
+
+  admin_group:
+    pattern: "/administration"
+    middlewares: [ AdminRolesMiddleware ]
+    routes:
+      admin.index:
+        pattern: "/"
+        methods: [ GET ]
+#        callable: Admin\AdminIndexController:index
+        callable: Admin\AdminGestionnaireController:index
+      admin_gestionnaires_group:
+        pattern: "/gestionnaires"
+        routes:
+          admin.gestionnaires.index:
+            pattern: ""
+            methods: [ GET ]
+            callable: Admin\AdminGestionnaireController:index
+          admin.gestionnaires.create:
+            pattern: "/nouveau"
+            methods: [ GET, POST ]
+            callable: Admin\AdminGestionnaireController:create
+          admin.gestionnaires.edit:
+            pattern: "/{serie_id:[0-9]+}"
+            methods: [ GET, PUT ]
+            callable: Admin\AdminGestionnaireController:edit
+          admin.gestionnaires.delete:
+            pattern: "/{serie_id:[0-9]+}"
+            methods: [ DELETE ]
+            callable: Admin\AdminGestionnaireController:delete
+            middlewares:
+              - AjaxRequestMiddleware
+      admin_ilots_group:
+        pattern: "/ilots"
+        routes:
+          admin.ilots.index:
+            pattern: ""
+            methods: [ GET ]
+            callable: Admin\IlotsController:index
+          admin.ilots.create:
+            pattern: "/nouveau"
+            methods: [ GET, POST ]
+            callable: Admin\IlotsController:create
+          admin.ilots.edit:
+            pattern: "/{ilot_name:.*}"
+            methods: [ GET, PUT ]
+            callable: Admin\IlotsController:edit
+          admin.ilots.delete:
+            pattern: "/{ilot_name:.*+}"
+            methods: [ DELETE ]
+            callable: Admin\IlotsController:delete
+            middlewares:
+              - AjaxRequestMiddleware
+      admin_plannings_group:
+        pattern: "/plannings"
+        routes:
+          admin.plannings.index:
+            pattern: ""
+            methods: [ GET ]
+            callable: Admin\PlanningsController:index
+          admin.plannings.create:
+            pattern: "/nouveau"
+            methods: [ GET, POST ]
+            callable: Admin\PlanningsController:create
+          admin.plannings.edit:
+            pattern: "/{planning_slug:[a-z\\-]+}"
+            methods: [ GET, PUT ]
+            callable: Admin\PlanningsController:edit
+          admin.plannings.delete:
+            pattern: "/{planning_id:[0-9]+}"
+            methods: [ DELETE ]
+            callable: Admin\PlanningsController:delete
+      admin_utilisateurs_group:
+        pattern: "/utilisateurs"
+        routes:
+          admin.utilisateurs.index:
+            pattern: ""
+            methods: [ GET ]
+            callable: Admin\UtilisateursController:index
+          admin.utilisateurs.roles.update:
+            pattern: ""
+            methods: [ PUT ]
+            callable: Admin\UtilisateursController:updateRole

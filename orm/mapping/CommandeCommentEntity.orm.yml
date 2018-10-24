@@ -1,0 +1,75 @@
+App\Entity\Doctrine\CommandeCommentEntity:
+    type: entity
+    table: commandes_comments
+    indexes:
+        fk_commandes_history_commandes1_idx:
+            columns:
+                - bill_id
+        fk_commandes_comments_comments_types1_idx:
+            columns:
+                - comment_type
+        fk_commandes_comments_users1_idx:
+            columns:
+                - commented_by
+    id:
+        id:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            generator:
+                strategy: IDENTITY
+    fields:
+        commentText:
+            type: text
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+                comment: 'Commentaire libre'
+            column: comment_text
+        commentDate:
+            type: date
+            nullable: true
+            options:
+                comment: 'Commentaire nécessitant une date particulière'
+            column: comment_date
+        createdAt:
+            type: datetime
+            nullable: true
+            options:
+                default: CURRENT_TIMESTAMP
+            column: created_at
+    manyToOne:
+        commentType:
+            targetEntity: App\Entity\Doctrine\CommentTypeEntity
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                comment_type:
+                    referencedColumnName: type
+            orphanRemoval: false
+        commentedBy:
+            targetEntity: App\Entity\Doctrine\UserEntity
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                commented_by:
+                    referencedColumnName: id
+            orphanRemoval: false
+        bill:
+            targetEntity: App\Entity\Doctrine\CommandeEntity
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                bill_id:
+                    referencedColumnName: bill_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

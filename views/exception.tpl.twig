@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>thyssenkrupp Materials France</title>
+
+    <base href="{{ base_url() }}">
+
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="css/errordoc.css">
+</head>
+<body>
+
+<header id="header">
+    <h1>thyssenkrupp Materials France</h1>
+    <p>Désolé {{ user }}, mais une erreur est survenue :(</p>
+</header>
+
+{% block content %}
+{% endblock content %}
+
+<p>
+    <a href="{{ path_for('root') }}">Cliquez-ici pour revenir à l'accueil de {{ app }}</a>
+</p>
+
+<footer id="tk_logo">
+    <img src="img/tk-logo.png" alt="thyssenkrupp">
+    <span>thyssenkrupp Materials France</span>
+</footer>
+
+</body>
+</html>

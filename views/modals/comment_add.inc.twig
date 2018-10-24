@@ -1,0 +1,38 @@
+{% extends "modals/modal.tpl.twig" %}
+
+{% block content %}
+    <form action="#" method="get" id="form_{{ modal.id }}" class="modal-form">
+        <div class="modal-errors"></div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="comments_types">Type de suivi:</label>
+            </div>
+            <div class="input">
+                <select name="comment_type" id="comments_types">
+                    {% for comment_type in comments_types %}
+                        <option value="{{ comment_type.type }}">{{ comment_type.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="comment_text">Commentaire <small>(optionnel)</small>:</label>
+            </div>
+            <div class="input">
+                <textarea name="comment_text" id="comment_text" cols="37" rows="4" placeholder="Votre commentaire sur ce suivi"></textarea>
+            </div>
+        </div>
+
+        <div class="fieldset">
+            <div class="label">
+                <label for="comment_date">Date <small>(optionnel)</small>:</label>
+            </div>
+            <div class="input">
+                <input type="text" id="comment_date" class="datepicker" placeholder="Date pour ce suivi">
+            </div>
+        </div>
+    </form>
+{% endblock content %}

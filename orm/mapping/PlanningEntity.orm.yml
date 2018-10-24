@@ -1,0 +1,57 @@
+App\Entity\Doctrine\PlanningEntity:
+  type: entity
+  table: plannings
+  indexes:
+    slug:
+      columns: [ slug ]
+  id:
+    id:
+      type: integer
+      generator:
+        strategy: IDENTITY
+      options:
+        unsigned: true
+  fields:
+    slug:
+      type: string
+      length: 255
+      unique: true
+      nullable: false
+    label:
+      type: string
+      length: 255
+      nullable: false
+    color:
+      type: string
+      length: 7
+      nullable: false
+  oneToMany:
+    charges:
+      targetEntity: App\Entity\Doctrine\IlotProcessingEntity
+      mappedBy: planning
+      fetch: LAZY
+      cascade:
+        - persist
+  manyToMany:
+    series:
+      targetEntity: App\Entity\Doctrine\SerieEntity
+      fetch: LAZY
+      joinTable:
+        name: plannings_series
+        joinColumns:
+          planning_id:
+            referencedColumnName: id
+        inverseJoinColumns:
+          serie_id:
+            referencedColumnName: id
+    ilots:
+      targetEntity: App\Entity\Doctrine\IlotEntity
+      fetch: LAZY
+      joinTable:
+        name: plannings_ilots
+        joinColumns:
+          planning_id:
+            referencedColumnName: id
+        inverseJoinColumns:
+          ilot_id:
+            referencedColumnName: id

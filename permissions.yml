@@ -1,0 +1,8 @@
+roles:
+  guest:
+    allow: ~
+  admin:
+    allow: ~
+  dev:
+    parents: [ admin ]
+    allow: ~

@@ -1,0 +1,61 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Modification du planning {{ planning }}{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+    <link rel="stylesheet" href="js/lib/wheelcolorpicker/wheelcolorpicker.css">
+    <link rel="stylesheet" href="js/lib/select2/select2.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/wheelcolorpicker/wheelcolorpicker.min.js"></script>
+{% endblock script %}
+
+{% block breadcrumb %}
+    <ul>
+        <li>{{ block_title('admin/plannings/index.twig', path_for('admin.plannings.index')) }}</li>
+        <li><span>{{ block('title') }}</span></li>
+    </ul>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="tkmf_block-text">
+            {% include "admin/plannings/form.inc.twig" %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.plannings.delete', { planning_id: planning.id }) }}"
+               class="button2 delete-hard tkmf_btn-block" data-delete="Êtes-vous sûr de vouloir supprimer le planning {{ planning }} ?">Supprimer le planning</a>
+        </div>
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('plannings.single', { planning_slug: planning.slug }) }}"
+               class="button2 tkmf_btn-block" target="_blank"><span class="icon-tk-calendar"></span> Consulter la charge atelier</a>
+        </div>
+
+        {% if planning.ilots is not empty %}
+            <div class="tkmf_block-text">
+                <h2 class="headline inline-title" title="Îlots du planning {{ planning }}">Îlots de <small>{{ planning }}</small></h2>
+                {% for depot in depots %}
+                    <h3 class="inline-title">{{ depot }}</h3>
+                    <ul class="list-ilots">
+                        {% for ilot in ilotsByDepots[depot.id] %}
+                            <li class="machine inline-title"><a href="{{ path_for('admin.ilots.edit', { ilot_name: ilot.name }) }}">{{ ilot.name }}</a> {{ ilot.dimensions ?? ilot.label }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="tkmf_block-empty">
+                <div class="alert alert-warning">{{ planning }} ne regroupe aucun îlot... Pensez à <a href="{{ path_for('admin.ilots.index') }}">en ajouter</a> !</div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}

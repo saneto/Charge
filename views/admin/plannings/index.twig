@@ -1,0 +1,38 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Administration des Plannings{% endblock title %}
+
+{% block content %}
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+
+        <div class="row">
+            {% if plannings is not empty %}
+                {% for planning in plannings %}
+                    <div class="theme-col-small">
+                        <div class="tkmf_block-text" style="border-bottom: 2px solid {{ planning.color }};">
+                            <h3>{{ planning }}</h3>
+                            {{ render_tips(planning) }}
+
+                            <a href="{{ path_for('admin.plannings.edit', { planning_slug: planning.slug }) }}" class="button1 tkmf_btn-block">Modifier le planning {{ planning }}</a>
+                            <div class="text-center" style="margin-top: 8px;">
+                                <a href="{{ path_for('plannings.single', { planning_slug: planning.slug }) }}" class="icon-tk-calendar" target="_blank">Consulter la charge atelier</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="tkmf_block-text">
+                    <p class="app_empty-block">Il n'y a pas de planning enregistré ...</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('admin.plannings.create') }}" class="button1 tkmf_btn-block">Créer un nouveau planning</a>
+        </div>
+    </div>
+{% endblock content %}

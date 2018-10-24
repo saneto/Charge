@@ -1,0 +1,20 @@
+{% if ilots is not empty %}
+    {% for charge in ilots %}
+        {% block ilot %}
+            <div class="tkmf_block-text app_ilot_selectable" title="Commande traitée sur cet ilôt" style="border-color: {{ charge.ilot.color }};" data-ilot='{{ charge.ilot|json_encode|raw }}'>
+                <div class="app_ilot">
+                    <div class="app_ilot-infos">
+                        <h2>{{ charge.ilot }}</h2>
+                        <span>Identifiant de l'ilot VME: {{ charge.ilot.name }}</span>
+                    </div>
+
+                    <div class="app_ilot-stock-count {{ charge.quantity|colorize_quantity }}">{{ charge.quantity }}</div>
+                </div>
+            </div>
+        {% endblock ilot %}
+    {% endfor %}
+{% else %}
+    <div class="tkmf_block-text alert alert-info">
+        <p class="app_empty-block">Aucune disponibilité à cette date ...</p>
+    </div>
+{% endif %}

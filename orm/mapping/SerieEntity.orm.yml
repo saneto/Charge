@@ -1,0 +1,56 @@
+App\Entity\Doctrine\SerieEntity:
+    type: entity
+    table: series
+    id:
+      id:
+        type: integer
+        nullable: false
+        id: true
+        options:
+          unsigned: true
+          comment: 'Identifiant de la Série'
+    indexes:
+      fk_series_depots1_idx:
+        columns:
+          - depot_id
+    uniqueConstraints:
+      id_UNIQUE:
+        columns:
+          - id
+    fields:
+      label:
+        type: string
+        nullable: true
+        length: 16
+        options:
+          fixed: false
+          comment: 'Nom de la Série'
+    oneToOne:
+      starter:
+        targetEntity: App\Entity\Doctrine\SerieStarterEntity
+        mappedBy: serie
+        fetch: LAZY
+        cascade:
+          - persist
+    manyToOne:
+      depot:
+        targetEntity: App\Entity\Doctrine\DepotEntity
+        cascade: {  }
+        fetch: LAZY
+        mappedBy: id
+        joinColumns:
+          depot_id:
+            referencedColumnName: id
+        orphanRemoval: false
+    manyToMany:
+      plannings:
+        targetEntity: App\Entity\Doctrine\PlanningEntity
+        fetch: LAZY
+        joinTable:
+          name: plannings_series
+          joinColumns:
+            serie_id:
+              referencedColumnName: id
+          inverseJoinColumns:
+            planning_id:
+              referencedColumnName: id

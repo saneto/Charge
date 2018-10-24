@@ -1,0 +1,69 @@
+{% extends "admin/layout.tpl.twig" %}
+{% block title %}Administration des utilisateurs{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="js/lib/select2/select2.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/app/utilisateurs.js"></script>
+{% endblock script %}
+
+{% block content %}
+    <div class="theme-col-all">
+        <div class="tkmf_block-text">
+            <h2 class="headline-empty">{{ block('title') }}</h2>
+        </div>
+    </div>
+
+    <div class="theme-col-small">
+        <div class="tkmf_block-text">
+            <h2 class="headline">Liste des rôles</h2>
+            <ul>
+                <li class="vendor"><b>Utilisateur</b> (guest): collaborateur sans permissions d'administration.</li>
+                <li class="vendor"><b>Administrateur</b> (admin): collaborateur avec permissions d'administration.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="theme-col-wide">
+        <div class="tkmf_block-text">
+            <h2 class="headline">Modifier les droits utilisateurs</h2>
+
+            <p>
+                Sélectionnez dans la liste ci-dessous les utilisateurs à qui modifier les droits.
+            </p>
+
+            <form action="{{ path_for('admin.utilisateurs.roles.update') }}" method="post" id="form_updateRole">
+                <input type="hidden" name="_METHOD" value="PUT">
+                <div>
+                    <label for="role" style="display:inline-block;width:150px;">Rôle:</label>
+                    <select name="role" id="role" required>
+                        <option value="0" selected disabled>Sélectionnez un rôle dans la liste</option>
+                        <optgroup label="Rôles">
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role }}</option>
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </div>
+                <div style="margin-top: 16px;">
+                    <label for="search_users" style="display:inline-block;width:150px;">Utilisateur(s):</label>
+                    <select name="users[]" id="search_users" multiple required>
+                        {% for role, usersByRole in users %}
+                            <optgroup label="{{ role|upper }}">
+                                {% for user in usersByRole %}
+                                    <option value="{{ user.id }}" data-role="{{ user.role }}">{{ user }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="margin-top: 16px; margin-left: 153px;">
+                    <button type="submit" class="button1">Modifier les droits</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

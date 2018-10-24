@@ -1,0 +1,58 @@
+App\Entity\Doctrine\IlotProcessingEntity:
+  type: entity
+  table: ilots_processings
+  fields:
+    id:
+      type: string
+      id: true
+      length: 255
+      generator:
+        strategy: AUTO
+    records_ids:
+      type: text
+    original_quantity:
+      type: integer
+      options:
+        unsigned: true
+    commandes_quantity:
+      type: integer
+      options:
+        unsigned: true
+    quantity:
+      type: integer
+      column: remaining_quantity
+      options:
+        unsigned: false
+    date:
+      type: date
+      column: quantity_at
+    orphan:
+      type: boolean
+  manyToOne:
+    planning:
+      targetEntity: App\Entity\Doctrine\PlanningEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumn:
+        name: planning_id
+        referencedColumnName: id
+    ilot:
+      targetEntity: App\Entity\Doctrine\IlotEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumn:
+        name: ilot_id
+        referencedColumnName: id
+    charge:
+      targetEntity: App\Entity\Doctrine\IlotChargeEntity
+      cascade:
+        - persist
+      fetch: LAZY
+      mappedBy: id
+      joinColumn:
+        name: charge_id
+        referencedColumnName: id

@@ -1,0 +1,17 @@
+{% extends "commandes/index.twig" %}
+
+{% block commandes_content %}
+    <div class="tkmf_block-text">
+        <h2 class="headline-empty">Résultats de la recherche</h2>
+    </div>
+
+    {% if commandes|length > 0 %}
+        <div id="commandes" class="tkmf_block-text">
+            {% include "commandes/commandes_resumes.twig" %}
+        </div>
+    {% else %}
+        <div class="tkmf_block-text">
+            <p class="app_empty-block">Aucun résultat ...</p>
+        </div>
+    {% endif %}
+{% endblock commandes_content %}

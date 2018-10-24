@@ -1,0 +1,84 @@
+{% for commande in commandes %}
+    {% if commande.canceled %}
+        {% set status =  "[ANNULÉE] " %}
+        {% set style = "background-color:" ~ constant('TK_RGB_ORANGE') ~ "; color: #FFFFFF;" %}
+    {% elseif commande.receptionned %}
+        {% set status =  "[REÇUE] " %}
+        {% set style = "background-color:" ~ constant('TK_RGB_GREEN') ~ "; color: #FFFFFF;" %}
+    {% else %}
+        {% set status = "" %}
+        {% set style = null %}
+    {% endif %}
+    <div class="commande">
+        <div class="tkmf_btn-list last">
+            <a href="{{ path_for('commandes.details', { bill_id: commande.id }) }}"
+               title="Consulter les détails de cette commande" style="{{ style }}">{{ status }}Commande n°{{ commande }}
+                (BL {{ commande.blId }}) - {{ commande.quantity }} pièces</a>
+
+            <ul>
+                <li class="vendor">Vendeur: <a href="{{ path_for('accounts.index', { user_id: commande.vendor.id }) }}">{{ commande.vendor }}</a></li>
+                <li class="vendor">Client: {{ commande.clientName }}</li>
+                <li class="wreck">Type de commande: Série {{ commande.serie|serie_label(false) }}</li>
+                <li class="go">Lancement de la commande: {{ commande.processingAt|date('d/m/Y') }}</li>
+                <li class="go">Départ de la commande: {{ commande.deliveryAt|date('d/m/Y') }}</li>
+
+                {% if commande.machineTs %}
+                    <li class="machine">Machine TS: {{ commande.machineTs }}</li>
+                    <li class="go">Départ TS: {{ commande.departTs ? commande.departTs|date('d/m/Y') : "N/A" }}</li>
+                {% endif %}
+            </ul>
+
+            <table id="comments_{{ commande.id }}" class="tk-table" style="margin-top: 8px;">
+                <thead>
+                <tr>
+                    <th>Type de suivi</th>
+                    <th>Commenté par</th>
+                    <th>Commentaire</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for comment in commande.comments %}
+                    <tr>
+                        <td style="text-align: center;">{{ comment.type }}</td>
+                        <td style="text-align: center;">{{ comment.author }}</td>
+                        <td>{{ comment.text }}</td>
+                        <td style="text-align: center;">{{ comment.date|date('d/m/Y') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-right">
+            <button class="btn_addComment" data-href="{{ path_for('commandes.comment.add', { bill_id: commande.id }) }}" data-commande="{{ commande|json_encode }}">Ajouter un suivi</button>
+        </div>
+
+        <div id="modal_addComment" title="Ajouter un suivi">
+            <form action="#" id="form_addComment">
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="comment_type">Type de suivi:</label>
+                    </div>
+                    <div class="input">
+                        <select name="comment_type" id="comment_type">
+                            <option value="0" selected disabled>Sélectionnez un type de suivi</option>
+                            {% for type in comments_types %}
+                                <option value="{{ type.type }}">{{ type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <hr>
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="comment_text">Commentaire:</label>
+                    </div>
+                    <div class="input">
+                        <textarea name="comment_text" id="comment_text" cols="38" rows="5" placeholder="Saisissez votre commentaire ici" style="resize: vertical;"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endfor %}
