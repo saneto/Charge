@@ -29,7 +29,7 @@ class IlotEntity extends Entity
     /**
      * @var SerieEntity
      */
-    // protected $serie;
+     protected $serie;
 
     /**
      * @var DepotEntity

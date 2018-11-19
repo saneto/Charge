@@ -443,16 +443,24 @@
             contentHeight: 150,
             eventOrder: "-priority",
             eventSources: [
-                $supplying_events,
-                {
-                    id: 'holidays',
-                    url: $fullcalendar_supplying.data('holidays')
-                },
+           $supplying_events,
                 {
                     id: 'charge',
                     url: $fullcalendar_supplying.data('events')
                 }
             ],
+            customButtons: {
+                add_event: {
+                    text: 'Rafraichir ',
+                    click: function() {
+                        $fullcalendar_supplying.fullCalendar('refetchEventSources', 'charge');
+                    }
+                }
+            }, header: {
+                left: 'title',
+                center: '',
+                right: 'today prev,next  add_event'
+            },
             eventRender: function ($event, $item) {
                 if ($event.start === undefined) {
                     return false;
@@ -525,12 +533,12 @@
                 $modal_suppylingAdd.data('start', $date);
                 $modal_suppylingAdd.dialog('open');
             }
-        });
+        }) ;
 
-        setInterval(function () {
+       /* setInterval(function () {
             addMessage("Mise à jour des disponibilités", 'success');
             $fullcalendar_supplying.fullCalendar('refetchEventSources', 'charge');
-        }, 20000);
+        }, 20000);*/
 
     $('input', $form_reserve).on('blur', function () {
         $(this).removeClass('error');

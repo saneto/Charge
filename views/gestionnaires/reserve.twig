@@ -1,20 +1,7 @@
 {% extends "layout.tpl.twig" %}
 {% block title %}Réservation Série {{ serie|serie_label(false) }}{% endblock %}
 
-{% block css %}
-    <link rel="stylesheet" href="/tk_css/css/form.css">
-    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
-    <link rel="stylesheet" href="js/lib/fullcalendar/fullcalendar.min.css">
-{% endblock css %}
 
-{% block script %}
-    {{ parent() }}
-    <script type="application/javascript" src="js/lib/moment.min.js"></script>
-    <script type="application/javascript" src="js/lib/fullcalendar/fullcalendar.min.js"></script>
-    <script type="application/javascript" src="js/lib/fullcalendar/locale/fr.js"></script>
-    <script type="application/javascript" src="js/app/gestionnaires-reserve.js"></script>
-{% endblock script %}
 
 {% block breadcrumb %}
     <ul>
@@ -200,3 +187,18 @@
     } %}
 
 {% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/tk_css/css/form.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="js/lib/fullcalendar/fullcalendar.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/moment.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/fullcalendar.min.js"></script>
+    <script type="application/javascript" src="js/lib/fullcalendar/locale/fr.js"></script>
+    <script type="application/javascript" src="js/app/gestionnaires-reserve.js"></script>
+{% endblock script %}

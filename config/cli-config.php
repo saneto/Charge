@@ -5,7 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\Driver\SimplifiedYamlDriver;
 use Doctrine\ORM\Tools\Setup;
 
-$isDevMode = getenv('ENV') === 'dev';
+$isDevMode = getenv('ENV') === 'prod';
 $settings = Provider\DoctrineProvider::getSettings();
 
 $driver = new SimplifiedYamlDriver($settings['meta']['entity_namespaces']);

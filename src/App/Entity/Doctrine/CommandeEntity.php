@@ -184,7 +184,7 @@ class CommandeEntity extends Entity
      */
     public function getVendor(): UserEntity
     {
-        return null;
+        return $this->vendor;
     }
 
     /**

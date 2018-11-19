@@ -119,10 +119,6 @@ class GestionnaireController extends Controller
         /**
          * @var SerieEntity $serie
          */
-        $serie = $this->getRepository(SerieEntity::class)->findOneBy(['id' => $serie_id]);
-        if($serie instanceof SerieEntity === false) {
-            throw new NotFoundException($request, $response);
-        }
 
         $start = $request->getQueryParam('start', new \DateTime());
         if ($start instanceof \DateTime === false) {
@@ -139,13 +135,10 @@ class GestionnaireController extends Controller
          * @var PlanningsManager $planningsManager
          */
         $planningsManager = $this->getManager(PlanningsManager::class);
+        $processings = $planningsManager->getPlanningProcessings( $serie_id, $start, $end);
 
-        foreach ($serie->getPlannings() as $planning) {
-            $processings = $planningsManager->getPlanningProcessings($planning, $start, $end);
-
-            for ($i = 0; $i < count($processings); $i++) {
-                array_push($charges, $processings[$i]);
-            }
+        for ($i = 0; $i < count($processings); $i++) {
+            array_push($charges, $processings[$i]);
         }
 
         if (!empty($charges)) {
