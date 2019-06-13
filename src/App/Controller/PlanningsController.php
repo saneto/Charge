@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Doctrine\CommandeProcessingEntity;
 use App\Entity\Doctrine\IlotChargeEntity;
+use App\Entity\Doctrine\CommandeEntity;
 use App\Entity\Doctrine\IlotEntity;
 use App\Entity\Doctrine\IlotProcessingEntity;
 use App\Entity\Doctrine\PlanningChargeEntity;
@@ -13,6 +14,7 @@ use App\Twig\TwigExtensions;
 use Core\Controller\Controller;
 use Core\Entity\Entity;
 use Doctrine\Common\Util\Debug;
+use Doctrine\ORM\Query\Expr\Join;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
@@ -142,7 +144,7 @@ class PlanningsController extends Controller
         $start = \DateTime::createFromFormat('Y-m-d', $fcStart) ?: null;
         $end = \DateTime::createFromFormat('Y-m-d', $fcEnd) ?: null;
 
-        $processings = $planningsManager->getPlanningProcessings($planning, $start, $end);
+        $processings = $planningsManager->getPlanningProcessingsWithPlan($planning, $start, $end);
 
         // on a des résultats
         if (!empty($processings)) {
@@ -192,13 +194,24 @@ class PlanningsController extends Controller
             ])); // url pour le javascript
         }
 
-        $charges = $this->getRepository(CommandeProcessingEntity::class)->findBy([
-            'ilot' => $fromCharge->getIlot(),
-            'processing_at' => $fromCharge->getDate()
-        ]);
+        /* $charges = $this->getRepository(CommandeProcessingEntity::class)->findBy([
+             'ilot' => $fromCharge->getIlot(),
+             'processing_at' => $fromCharge->getDate()
+         ]);*/
 
+       $charges = $this->getDoctrine()->createQueryBuilder()->select('cpe')
+             ->from(CommandeProcessingEntity::class, 'cpe')
+             ->leftJoin(
+                 CommandeEntity::class, 'ce',
+                 Join::WITH, 'ce.id = cpe.bill'
+             )
+             ->where('cpe.ilot = :ilot_id AND cpe.processing_at = :Pr');
+
+         $charges =  $charges->setParameter('ilot_id', $fromCharge->getIlot())
+             ->setParameter('Pr', $fromCharge->getDate())->getQuery()->getResult();
         return $this->render($response, 'planning.charge_details.inc', compact('fromCharge', 'charges', 'jsonCharge'));
     }
+
 
     /**
      * @param Request $request

@@ -87,6 +87,18 @@ App\Entity\Doctrine\CommandeEntity:
             column: delivery_at
             options:
                 comment: 'Date de départ TS'
+        departAtelier:
+            type: date
+            nullable: true
+            column: depart_atelier
+            options:
+                comment: 'Date de départ de l atelier'
+        dateLancement:
+            type: date
+            nullable: true
+            column: date_lancement
+            options:
+                comment: 'Date de lancement'
         processingAt:
             type: date
             nullable: true

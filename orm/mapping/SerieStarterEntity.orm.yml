@@ -15,6 +15,21 @@ App\Entity\Doctrine\SerieStarterEntity:
         unsigned: true
     created_at:
       type: datetime
+    reserved_by:
+      type: string
+      nullable: true
+      length: 255
+      column: reserved_by
+      options:
+        fixed: false
+        comment: 'la personne qui l a crée'
+    created:
+      type: integer
+      nullable: true
+      column: created
+      options:
+        unsigned: false
+        comment: 's il a été crée'
   oneToOne:
     serie:
       targetEntity: App\Entity\Doctrine\SerieEntity

@@ -17,6 +17,10 @@ use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Zend\Permissions\Acl\Acl;
+use App\Entity\Doctrine\CommandeEntity;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class CommandesController extends Controller
 {
@@ -36,10 +40,12 @@ class CommandesController extends Controller
         /**
          * @var Doctrine\SerieEntity[] $series
          */
+      //  $this->excelfle();
         $series = $this->getRepository(Doctrine\SerieEntity::class)->findAll();
         $users = $this->getRepository(Doctrine\UserEntity::class)->findAll();
         $ilots = $this->getRepository(Doctrine\IlotEntity::class)->findAll();
-
+        $depots= $this->getRepository(Doctrine\DepotEntity::class)->findAll();
+        $toto = "dsqdsq";
         $seriesBuilder = [];
         $usersBuilder = [];
 
@@ -54,10 +60,15 @@ class CommandesController extends Controller
             $ilotsBuilder[$ilot->getId()] = (string) $ilot->getName();
         }
 
+        foreach ($depots as $depot) {
+            $depotsBuilder[$depot->getId()] = (string) $depot->getName();
+        }
+
         $builderValues = [
             'series' => $seriesBuilder,
             'users' => $usersBuilder,
-            'ilots' => $ilotsBuilder
+            'ilots' => $ilotsBuilder,
+            'depots'=> $depotsBuilder
         ];
 
         // recherche
@@ -77,10 +88,13 @@ class CommandesController extends Controller
                     'processings' => Doctrine\CommandeProcessingEntity::class
                 ]
             );
+            //var_dump($deserializedRuleGroup);
             $parsedRuleGroup = $commandesParser->parse($deserializedRuleGroup);
 
             // on créer le query DQL Doctrine (du moins on récupère celui généré)
-            $qb = $this->getDoctrine()->createQuery($parsedRuleGroup->getQueryString());
+
+
+            $qb = $this->getDoctrine()->createQuery($parsedRuleGroup->getQueryString()." ORDER BY object.id  ASC ");
             $qb->setParameters($parsedRuleGroup->getParameters());
 
             // on exécute la requête DQL Doctrine
@@ -121,6 +135,88 @@ class CommandesController extends Controller
             'builder_values' => $builderValues
         ]);
     }
+
+
+    /**
+     * @param Request  $request
+     * @param Response $response
+     *
+     * @return excel file
+     */
+    public function excelfleAction(Request $request, Response $response)
+    {
+        $spreadsheet = new Spreadsheet();
+        $rowArray = [   'Date Lancement', 'Vendeur', 'N° BL ', 'N° devis',
+                        'Nom client', 'Ref cde', 'Atelier de fab.', 'cas',
+                        'Machine TS', 'date TS', 'SST', 'Nb pièce',
+                        'Date prélèvement pièce', 'Ilot de fab', 'Dépôt de prélèvement', 'Date depart Atelier',
+                        'Date rendu client '/*, 'Type de suivi', 'Commentaire suivi', 'Date suivi'*/];
+        $spreadsheet->getProperties()->setCreator('a')
+                                    ->setLastModifiedBy('b')
+                                    ->setTitle('d')
+                                    ->setSubject('r')
+                                    ->setDescription('t');
+
+        $i = 1;
+        $table = $spreadsheet->getActiveSheet();
+        foreach ($rowArray as $value) {
+            $table->setCellValueByColumnAndRow($i, 1,  $value);
+            $i++;
+        }
+
+        $commandes = $this->getManager(CommandesManager::class)->getallCommandes();
+        $i = 1;
+        foreach ($commandes as $commande) {
+            $i++;
+            $table->setCellValueByColumnAndRow(1, $i, $commande["dateLancement"] );
+            $table->setCellValueByColumnAndRow(2, $i, $commande["displayname"]);
+            $table->setCellValueByColumnAndRow(3, $i, $commande["blId"]);
+            $table->setCellValueByColumnAndRow(4, $i, $commande["id"]);
+            $table->setCellValueByColumnAndRow(5, $i, $commande["clientName"]);
+            $table->setCellValueByColumnAndRow(6, $i, $commande["clientReference"]);
+            $table->setCellValueByColumnAndRow(7, $i, $commande["name"]);
+            $table->setCellValueByColumnAndRow(8, $i, $commande["casType"]);
+            $table->setCellValueByColumnAndRow(9, $i, $commande["machineTs"]);
+            $table->setCellValueByColumnAndRow(10, $i, $commande["departTs"]);
+            $table->setCellValueByColumnAndRow(11, $i, $commande["sousTraitant"]);
+            $table->setCellValueByColumnAndRow(12, $i, $commande["quantity"]);
+            $table->setCellValueByColumnAndRow(13, $i, $commande["processingAt"]);
+            $table->setCellValueByColumnAndRow(14, $i, $commande["ilotname"]);
+            $table->setCellValueByColumnAndRow(15, $i, $commande["depotname"]);
+            $table->setCellValueByColumnAndRow(16, $i, $commande["processing_at"]);
+            $table->setCellValueByColumnAndRow(17, $i, $commande["deliveryAt"]);
+        }
+
+         $i = 1;
+        foreach ($commandes as $commande) {
+            $i++;
+            $table->setCellValueByColumnAndRow(1, $i, $commande["dateLancement"] );
+            $table->setCellValueByColumnAndRow(2, $i, $commande["displayname"]);
+            $table->setCellValueByColumnAndRow(3, $i, $commande["blId"]);
+            $table->setCellValueByColumnAndRow(4, $i, $commande["id"]);
+            $table->setCellValueByColumnAndRow(5, $i, $commande["clientName"]);
+            $table->setCellValueByColumnAndRow(6, $i, $commande["clientReference"]);
+            $table->setCellValueByColumnAndRow(7, $i, $commande["name"]);
+            $table->setCellValueByColumnAndRow(8, $i, $commande["casType"]);
+            $table->setCellValueByColumnAndRow(9, $i, $commande["machineTs"]);
+            $table->setCellValueByColumnAndRow(10, $i, $commande["departTs"]);
+            $table->setCellValueByColumnAndRow(11, $i, $commande["sousTraitant"]);
+            $table->setCellValueByColumnAndRow(12, $i, $commande["quantity"]);
+            $table->setCellValueByColumnAndRow(13, $i, $commande["processingAt"]);
+            $table->setCellValueByColumnAndRow(14, $i, $commande["ilotname"]);
+            $table->setCellValueByColumnAndRow(15, $i, $commande["depotname"]);
+            $table->setCellValueByColumnAndRow(16, $i, $commande["processing_at"]);
+            $table->setCellValueByColumnAndRow(17, $i, $commande["deliveryAt"]);
+        }
+
+
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="historique.xlsx"');
+        $writer->save("php://output");
+    }
+
 
     /**
      * @param Request $request
@@ -171,18 +267,27 @@ class CommandesController extends Controller
 
         // la commande existe bien en base de données
         if ($commande instanceof Doctrine\CommandeEntity) {
+
             $cas_type = $request->getParsedBodyParam('cas_type');
             $client_reference = $request->getParsedBodyParam('client_reference');
+            $client_name = $request->getParsedBodyParam('client_name');
             $machine_ts = $request->getParsedBodyParam('machine_ts');
             $depart_ts = $request->getParsedBodyParam('depart_ts');
             $delivery_at = $request->getParsedBodyParam('delivery_at');
             $sous_traitant = $request->getParsedBodyParam('sous_traitant');
             $transport = $request->getParsedBodyParam('transport');
+            $date_depart = $request->getParsedBodyParam('date_depart');
+            $date_lancement = $request->getParsedBodyParam('date_lancement');
+
+
 
             // on modifie la commande et on capture les erreurs...
             try {
+
+
                 $commande->setCasType($cas_type);
                 $commande->setClientReference($client_reference);
+                $commande->setClientName($client_name);
                 $commande->setMachineTs($machine_ts);
                 $commande->setSousTraitant($sous_traitant);
                 $commande->setTransport($transport);
@@ -192,6 +297,14 @@ class CommandesController extends Controller
 
                 $delivery_at = \DateTime::createFromFormat('d/m/Y', $delivery_at) ?: null;
                 $commande->setDeliveryAt($delivery_at);
+
+                $date_depart = \DateTime::createFromFormat('d/m/Y', $date_depart) ?: null;
+                $commande->setDepartAtelier($date_depart);
+
+                $date_lancement = \DateTime::createFromFormat('d/m/Y', $date_lancement) ?: null;
+                $commande->setDateLancement($date_lancement);
+
+
 
                 $errors = $this->persist($commande);
                 if ($errors === null) {
@@ -349,7 +462,7 @@ class CommandesController extends Controller
         $serie = $this->getRepository(Doctrine\SerieEntity::class)->find($serie_id);
 
         $vendor = $this->container->auth->getIdentity();
-        $today = (new \DateTime())->setTimestamp($request->getServerParam('REQUEST_TIME'));
+        //$today = (new \DateTime())->setTimestamp($request->getServerParam('REQUEST_TIME'));
 
         $bill_id = $request->getParsedBodyParam('bill_id', 0);
         $bl_id = $request->getParsedBodyParam('bl_id', 0);
@@ -361,6 +474,9 @@ class CommandesController extends Controller
         $machine_ts = strip_tags($request->getParsedBodyParam('machine_ts', null));
         $depart_ts = strip_tags($request->getParsedBodyParam('depart_ts', null));
         $date_livraison = strip_tags($request->getParsedBodyParam('date_livraison', null));
+        $date_depart = strip_tags($request->getParsedBodyParam('date_depart', null));
+        $date_lancement = strip_tags($request->getParsedBodyParam('date_lancement', null));
+
 
         $comments = $request->getParsedBodyParam('comments', []);
         $processings = $request->getParsedBodyParam('supplies', []);
@@ -383,6 +499,8 @@ class CommandesController extends Controller
             try {
                 $date_depart_ts = \DateTime::createFromFormat("d/m/Y", $depart_ts) ?: null;
                 $date_livraison = \DateTime::createFromFormat("d/m/Y", $date_livraison) ?: null;
+                $date_depart = \DateTime::createFromFormat("d/m/Y", $date_depart) ?: null;
+                $date_lancement = \DateTime::createFromFormat("d/m/Y", $date_lancement) ?: null;
 
                 $commande = (new Doctrine\CommandeEntity)
                     ->setId($bill_id)
@@ -397,7 +515,9 @@ class CommandesController extends Controller
                     ->setSousTraitant($sous_traitant)
                     ->setMachineTs($machine_ts)
                     ->setDepartTs($date_depart_ts)
-                    ->setDeliveryAt($date_livraison);
+                    ->setDeliveryAt($date_livraison)
+                    ->setDepartAtelier($date_depart)
+                    ->setDateLancement($date_lancement);
 
                 /**
                  * @var Doctrine\CommandeEntity $commande
@@ -477,13 +597,12 @@ class CommandesController extends Controller
                 if ($commande_processing instanceof \DateTime) {
                     $commande->setProcessingAt($commande_processing);
                 }
-
+                $starter->setCreated(1);
+                $this->getDoctrine()->persist($starter);
+                $this->getDoctrine()->flush();
                 $errors = $this->persist($commande);
 
                 if ($errors === null) {
-                    $this->getDoctrine()->remove($starter);
-                    $this->getDoctrine()->flush();
-
                     return $response->withJson($commande, 201);
                 } else {
                     return $response->withJson($errors, 400);
@@ -558,5 +677,62 @@ class CommandesController extends Controller
 
             return $response->withJson(['error' => $message], 500);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @param Response $response
+     *
+     * @return ResponseInterface
+     * @throws NotFoundException
+     */
+    public function addIlotAction(Request $request, Response $response, int $charge_id): ResponseInterface
+    {
+        $charge = new Doctrine\CommandeProcessingEntity();
+        // on a trouvé la charge demandée
+        $commande = $this->getDoctrine()->getReference(Doctrine\CommandeEntity::class,$charge_id);
+        if ($charge instanceof Doctrine\CommandeProcessingEntity) {
+
+            $depot_id = (int) $request->getParsedBodyParam('depot_id');
+            $ilot_id = (int) $request->getParsedBodyParam('ilot_id');
+            $quantity = (int) $request->getParsedBodyParam('quantity');
+            $processing_at = \DateTime::createFromFormat("d/m/Y", $request->getParsedBodyParam('processing_at'));
+            try {
+                $charge->setBill($commande)
+                    ->setQuantity($quantity)
+                    ->setDepot($this->getDoctrine()->getReference(Doctrine\DepotEntity::class,$depot_id))
+                    ->setIlot($this->getDoctrine()->getReference(Doctrine\IlotEntity::class,$ilot_id))
+                    ->setProcessingAt($processing_at);
+
+                $newComment = (new Doctrine\CommentEntity())
+                    ->setBill($commande)
+                    ->setAuthor($commande->getVendor())
+                    ->setType($this->getDoctrine()->getReference(Doctrine\CommentTypeEntity::class,'approvisionnement'))
+                    ->setText($quantity.' pièces depuis le dépôt '.$this->getDoctrine()->getReference(Doctrine\DepotEntity::class,$depot_id)->getName())
+                    ->setCreatedAt($commande->getCreatedAt())
+                    ->setDate($processing_at);
+
+                $this->persist($newComment);
+                $errors = $this->persist($charge);
+
+                if ($errors === null) {
+                    return $response->withJson(['message' => "Les informations du prélèvement ont été ajouter"]);
+                } else {
+                    return $response->withJson(['errors' => $errors], 400);
+                }
+            } catch (\TypeError $e) {
+                $message = "Veuillez vérifier les informations saisie dans le formulaire";
+                if (AppProvider::getEnv() === 'dev') {
+                    $message .= " " . $e->getMessage();
+                }
+                return $response->withJson(['error' => $message], 500);
+            }
+        }
+    }
+
+
+    public function extractExcelAction(Request $request, Response $response)
+    {
+
     }
 }

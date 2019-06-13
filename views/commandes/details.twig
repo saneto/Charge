@@ -46,7 +46,6 @@
             var $editChargeHref = $('.edit-charge');
             var $editChargeModal = $('#modal_cde_charge-edit');
             var $editChargeForm = $('#form_modal_cde_charge-edit');
-
             $editChargeHref.on('click', function (e) {
                 var $self = $(this);
                 e.preventDefault();
@@ -112,7 +111,7 @@
                 open: function () {
                     var charge = JSON.parse($(this).data('charge'));
                     var processing_at = moment(charge.processing_at).format('DD/MM/YYYY');
-
+                    console.log(charge)
                     $('#chargeEditQuantity', $editChargeForm).val(charge.quantity);
                     $('#chargeEditQuantityAt', $editChargeForm).val(processing_at);
                     $('#chargeEditDepot option[value="' + charge.depot.id + '"]', $editChargeForm).prop('selected', true);
@@ -129,7 +128,7 @@
                         }
                     },
                     {
-                        text: "Modifier",
+                        text: "Valider",
                         type: "button",
                         class: "button1",
                         click: function () {
@@ -138,7 +137,16 @@
                     }
                 ]
             });
+
+            $('#ajouterIlot').click(function(){
+                let table = {'id': 'add', 'quantity':0,'depot':{'id':'0'},'ilot':{'id':'0'}}
+                $editChargeForm.attr('action', "{{ path_for('commandes.ilot.add', { charge_id: commande.id }) }}");
+                $editChargeModal.data('charge', JSON.stringify(table));
+                $editChargeModal.dialog('open');
+            });
         });
+
+
     </script>
     {% endif %}
 {% endblock script %}
@@ -222,7 +230,7 @@
                         <label for="depart_ts">Date départ TS:</label>
                     </div>
                     <div class="input">
-                        <input type="text" id="depart_ts" class="datepicker" name="depart_ts" value="{{ commande.departTs }}">
+                        <input type="text" id="depart_ts" class="datepicker" name="depart_ts" value="{{ commande.departTs ? commande.departTs|date('d/m/Y') }}">
                     </div>
                 </div>
 
@@ -241,7 +249,7 @@
                         <label for="date_depart">Date de départ atelier:</label>
                     </div>
                     <div class="input">
-                        <input type="text" id="date_depart" class="datepicker" name="date_depart" value="">
+                        <input type="text" id="date_depart" class="datepicker" name="date_depart" value="{{ commande.departAtelier ? commande.departAtelier|date('d/m/Y') }}">
                     </div>
                 </div>
 
@@ -250,7 +258,7 @@
                         <label for="date_lancement">Date de lancement:</label>
                     </div>
                     <div class="input">
-                        <input type="text" id="date_lancement" class="datepicker" name="date_lancement" value="">
+                        <input type="text" id="date_lancement" class="datepicker" name="date_lancement" value="{{ commande.dateLancement ? commande.dateLancement|date('d/m/Y') }}">
                     </div>
                 </div>
 
@@ -276,7 +284,12 @@
         <div class="tkmf_block-text">
             <h2 class="headline-empty">Détails des prélèvements (total: {{ commande.quantity }} pièces)</h2>
         </div>
-
+        <div class="fieldset">
+            <div class="button">
+                <button class="button1" id="ajouterIlot">Ajouter un ilot</button>
+            </div>
+        </div>
+        <br/>
         <div class="row">
             {% for processing in commande.processings %}
                 <div class="theme-col-small">
@@ -321,6 +334,7 @@
                             <td style="text-align: center;">{{ comment.author }}</td>
                             <td>{{ comment.text }}</td>
                             <td style="text-align: center;">{{ comment.date|date('d/m/Y') }}</td>
+
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -359,6 +373,9 @@
 
     {#Modal de modification d'un événement au planning#}
     {% include "modals/charge_edit.inc.twig" with {
-        modal: { id: "modal_cde_charge-edit", title: "Modifier un prélèvement" }
-    } %}
+            modal: { id: "modal_cde_charge-edit", title: "Modifier un prélèvement" }
+        }
+    %}
+
+
 {% endblock content %}

@@ -28,7 +28,9 @@ class CommandeEntity extends Entity
         'processings.processing_at' => 'processings.processing_at',
         'commande_delivery_at' => 'deliveryAt',
         'commande_created_at' => 'createdAt',
-        'commande_reception_at' => 'receptionAt'
+        'commande_depart_atelier' => 'departAtelier',
+        'commande_date_lancement' => 'dateLancement',
+       //'Ilot_de_fabrication' => 'processings.ilot',
     ];
 
     /**
@@ -95,6 +97,16 @@ class CommandeEntity extends Entity
      * @var \DateTime|null
      */
     protected $deliveryAt;
+
+    /**
+     * @var \DateTime|null
+     */
+    protected $departAtelier;
+
+    /**
+     * @var \DateTime|null
+     */
+    protected $dateLancement;
 
     /**
      * @var mixed
@@ -537,5 +549,39 @@ class CommandeEntity extends Entity
     public function isReceptionned(): bool
     {
         return ($this->getReceptionAt() instanceof \DateTime);
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDateLancement(): ?\DateTime
+    {
+        return $this->dateLancement;
+    }
+
+    /**
+     * @param \DateTime|null $dateLancement
+     */
+    public function setDateLancement(?\DateTime $dateLancement)
+    {
+        $this->dateLancement = $dateLancement;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getDepartAtelier(): ?\DateTime
+    {
+        return $this->departAtelier;
+    }
+
+    /**
+     * @param \DateTime|null $departAtelier
+     */
+    public function setDepartAtelier(?\DateTime $departAtelier)
+    {
+        $this->departAtelier = $departAtelier;
+        return $this;
     }
 }

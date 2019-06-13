@@ -1,19 +1,6 @@
 {% extends "layout.tpl.twig" %}
 {% block title %}Liste des commandes{% endblock title %}
 
-{% block css %}
-    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
-    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
-    <link rel="stylesheet" href="js/lib/jqbuilder/jqbuilder.min.css">
-{% endblock css %}
-
-{% block script %}
-    {{ parent() }}
-    <script type="application/javascript" src="js/lib/extendext.min.js"></script>
-    <script type="application/javascript" src="js/lib/doT.min.js"></script>
-    <script type="application/javascript" src="js/lib/jqbuilder/jqbuilder.min.js"></script>
-    <script type="application/javascript" src="js/app/commandes.js"></script>
-{% endblock script %}
 
 {% block content %}
     <div class="theme-col-wide">
@@ -36,8 +23,26 @@
             <a href="{{ path_for('gestionnaires.index') }}" class="button1 tkmf_btn-block">Saisir une nouvelle commande</a>
         </div>
 
+        <div class="tkmf_block-empty">
+            <a href="{{ path_for('commandes.excel') }}" class="button1 tkmf_btn-block">Extraire l'historique</a>
+        </div>
+
         <div class="tkmf_block-text">
             <b>Commandes enregistrées</b>: {{ commandes|length }}
         </div>
     </div>
 {% endblock content %}
+
+{% block css %}
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" href="js/lib/jquery-ui/jquery-ui.theme.min.css">
+    <link rel="stylesheet" href="js/lib/jqbuilder/jqbuilder.min.css">
+{% endblock css %}
+
+{% block script %}
+    {{ parent() }}
+    <script type="application/javascript" src="js/lib/extendext.min.js"></script>
+    <script type="application/javascript" src="js/lib/doT.min.js"></script>
+    <script type="application/javascript" src="js/lib/jqbuilder/jqbuilder.min.js"></script>
+    <script type="application/javascript" src="js/app/commandes.js"></script>
+{% endblock script %}

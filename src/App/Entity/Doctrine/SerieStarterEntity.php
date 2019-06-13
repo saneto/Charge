@@ -29,8 +29,20 @@ class SerieStarterEntity extends Entity
     protected $created_at;
 
     /**
+     * @var boolean
+     */
+
+    protected $created;
+
+    /**
+     * @var string
+     */
+    protected $reserved_by;
+
+    /**
      * @var array
      */
+
     protected $excluded = ['serie'];
 
     /**
@@ -143,5 +155,47 @@ class SerieStarterEntity extends Entity
     {
         $this->created_at = $created_at;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreated(): int
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param int $created
+     */
+    public function setCreated(int $created): void
+    {
+        $this->created = $created;
+    }
+
+
+    public function setdefaultCreated(): void
+    {
+        $this->created = 0;
+    }
+    /**
+     * @return string
+     */
+    public function getReservedBy(): string
+    {
+        return $this->reserved_by;
+    }
+
+    /**
+     * @param string $reserved_by
+     */
+    public function setReservedBy(string $reserved_by): void
+    {
+        $this->reserved_by = $reserved_by;
+    }
+
+    public function setReservedBynull(): void
+    {
+        $this->reserved_by = null;
     }
 }

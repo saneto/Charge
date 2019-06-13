@@ -394,22 +394,13 @@
             $fullcalendar_supplying.fullCalendar('addEventSource', $supplying_events);
             $fullcalendar_supplying.fullCalendar('refetchEventSources', 'supplying');
 
-            var count = parseInt($supplyingCount.attr('data-count'));
-            /*var $event = $modal_suppylingAdd.data('event');
 
-            if ($event !== undefined) {
-                $event = $fullcalendar_supplying.fullCalendar('clientEvents', $event.id)[0];
-                $event.data.quantity = $event.data.quantity - quantity;
-                console.log($event);
-
-                $fullcalendar_supplying.fullCalendar('updateEvent', $event);
-            }*/
-
+            let count = parseInt($("#count_supplying_"+$ilot.id).attr('data-count'));
             count = count + quantity;
-            $supplyingCount
+            $("#count_supplying_"+$ilot.id)
                 .text(count)
                 .attr('data-count', count);
-
+            $("#count_supplying_bloc"+$ilot.id).css( "display", "" );
             var depart = $('span', '#dateDepartCommande').data('depart');
 
             if (depart === "") {
@@ -419,8 +410,7 @@
                 $('span', '#dateDepartCommande').data('depart', $start);
                 $('span', '#dateDepartCommande').text($start.format('DD/MM/YYYY'));
             }
-            console.log(depart);
-            console.log($start);
+
 
             addComment('approvisionnement', "Approvisionnement", quantity + " pièces depuis le dépôt " + depot_name, $start.format('DD/MM/YYYY'), $supplyingEvent.id);
 
@@ -444,11 +434,12 @@
             eventOrder: "-priority",
             eventSources: [
            $supplying_events,
-                {
-                    id: 'charge',
-                    url: $fullcalendar_supplying.data('events')
-                }
-            ],
+                 {
+                     id: 'charge',
+                     url: $fullcalendar_supplying.data('events')
+                 },
+
+             ],
             customButtons: {
                 add_event: {
                     text: 'Rafraichir ',
@@ -459,36 +450,41 @@
             }, header: {
                 left: 'title',
                 center: '',
-                right: 'today prev,next  add_event'
+                right: 'add_event'
             },
             eventRender: function ($event, $item) {
                 if ($event.start === undefined) {
                     return false;
                 }
+                console.log($event)
+                console.log($event.data.quantity)
 
-                $item.attr('title', $event.tooltip || $event.title);
+                  $item.attr('title', $event.tooltip || $event.title);
 
                 if ($event.eventType === 'chargeGestionnaire' || $event.eventType === 'supplying') {
                     var plural = ($event.data.quantity < -1 || $event.data.quantity > 1) ? "s" : "";
                     $item.html('<b>' + $event.data.ilot.name + '</b>: ' + $event.data.quantity + ' pièce' + plural);
                 }
-
+                if($event.data.quantity<0)
+                {
+                    $item.attr('style', 'background-color:red');
+                }
                 if ($event.eventType === 'supplying') {
-                    var $html = $item.html();
-                    var $icon = $('<span/>')
-                        .append($html)
-                        .addClass('icon-tk-download');
+                     var $html = $item.html();
+                     var $icon = $('<span/>')
+                         .append($html)
+                         .addClass('icon-tk-download');
 
-                    $item.html($icon);
-                } /*else if ($event.eventType === 'chargeGestionnaire' && $event.data.quantity < 1) {
-                    $item.css('cursor', 'not-allowed');
-                }*/
+                     $item.html($icon);
+                 } else if ($event.eventType === 'chargeGestionnaire' && $event.data.quantity < 1) {
+                     $item.css('cursor', 'not-allowed');
+                 }
 
                 return true;
             },
             eventClick: function ($event, e) {
                 e.preventDefault();
-
+                console.log("mdlld 1")
                 if ($event.eventType === 'chargeGestionnaire') {
                     $modal_suppylingAdd.data('event', $event);
                     $modal_suppylingAdd.data('start', $event.start);
@@ -544,13 +540,13 @@
         $(this).removeClass('error');
     });
 
-    $('#bill_id', $form_reserve).on('keyup', function () {
+    /*$('#bill_id', $form_reserve).on('keyup', function () {
         if ($(this).val().length > 2) {
             $('#form_submit').attr('disabled', false);
         } else {
             $('#form_submit').attr('disabled', true);
         }
-    });
+    });*/
 
     $form_reserve.on('submit', function (e) {
         e.preventDefault();
@@ -651,5 +647,9 @@
             $('#depart_ts').prop('disabled', true);
         }
     })
+    $('#form_submit').attr('disabled', false);
 
+    $("#choisirSemaine").on('change', function () {
+        $('#gst-reserve_fullcalendar').fullCalendar('gotoDate', $(this).val().split("/").reverse().join("-"));
+    })
 })(jQuery);

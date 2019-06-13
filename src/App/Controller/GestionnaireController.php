@@ -5,6 +5,10 @@ use App\Entity\Doctrine\CommentTypeEntity;
 use App\Entity\Doctrine\DepotEntity;
 use App\Entity\Doctrine\IlotEntity;
 use App\Entity\Doctrine\SerieEntity;
+use App\Entity\Doctrine\CommandeEntity;
+use App\Entity\Doctrine\CasValueEntity;
+use App\Entity\Doctrine\CommandeProcessingEntity;
+use App\Entity\Doctrine\CommentEntity;
 use App\Entity\Planning\IlotGestionnairesChargeEvent;
 use App\Exception\NoSerieAttachedToPlanning;
 use App\Exception\NotAttachedToPlanning;
@@ -19,6 +23,7 @@ use Psr\Http\Message\ResponseInterface;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
+use Doctrine\ORM\Query\Expr\Join;
 
 class GestionnaireController extends Controller
 {
@@ -37,9 +42,7 @@ class GestionnaireController extends Controller
         /**
          * @var $seriesManager SeriesManager
          */
-        $seriesManager = $this->getManager(SeriesManager::class);
-        $series = $seriesManager->findBy([], ['id' => 'ASC']);
-        echo($series);
+        $series = $this->getManager(SeriesManager::class)->findBy([], ['id' => 'ASC']);
         return $this->render($response, 'gestionnaires.index', compact('series'));
     }
 
@@ -60,8 +63,14 @@ class GestionnaireController extends Controller
          * @var $serie SerieEntity
          * @var $depots DepotEntity[]
          */
-
         $serie = $this->getRepository(SerieEntity::class)->find($serie_id);
+        $vendor = $this->container->auth->getIdentity();
+        $starter =  $this->getManager(SeriesStartersManager::class)->getNextSerieStarterbyUser($serie, $vendor->getId());
+
+
+
+
+
         if($serie instanceof SerieEntity === false) {
             throw new NotFoundException($request, $response);
         }
@@ -72,8 +81,9 @@ class GestionnaireController extends Controller
         /**
          * @var IlotEntity[] $ilotsSerie
          */
+
         $ilotsSerie = [];
-        $depots = $depotsManager->findAll();
+        $depots = $depotsManager->findBy(['open' => '1']);
 
         $planningsSerie = $serie->getPlannings();
 
@@ -100,10 +110,11 @@ class GestionnaireController extends Controller
 
         $comments_types = $this->getRepository(CommentTypeEntity::class)->findAll();
         $datepicker_days = $ilotsManager->getIlotsChargeDays($serie_id);
-
-        $starter = $this->getManager(SeriesStartersManager::class)->getNextSerieStarter($serie);
-
-        return $this->render($response, 'gestionnaires.reserve', compact('starter', 'serie', 'depots', 'ilots', 'datepicker_days', 'comments_types'));
+        $casVme = $this->getRepository(CasValueEntity::class)->findAll();
+       // $starter = $this->getManager(SeriesStartersManager::class)->getNextSerieStarter($serie);
+        $date   = new \DateTime();
+        $start =  $date->format('ym');
+        return $this->render($response, 'gestionnaires.reserve', compact('starter', 'serie','start','casVme', 'depots', 'ilots', 'datepicker_days', 'comments_types'));
     }
 
     /**
@@ -129,17 +140,11 @@ class GestionnaireController extends Controller
         if ($end instanceof \DateTime === false) {
             $end = \DateTime::createFromFormat('Y-m-d', $end);
         }
-
-        $charges = [];
         /**
          * @var PlanningsManager $planningsManager
          */
         $planningsManager = $this->getManager(PlanningsManager::class);
-        $processings = $planningsManager->getPlanningProcessings( $serie_id, $start, $end);
-
-        for ($i = 0; $i < count($processings); $i++) {
-            array_push($charges, $processings[$i]);
-        }
+        $charges = $planningsManager->getPlanningProcessings( $serie_id, $start, $end);
 
         if (!empty($charges)) {
             Entity::toEvent();
@@ -165,11 +170,6 @@ class GestionnaireController extends Controller
      */
     public function ilotsQuantities_ajaxAction(Request $request, Response $response, int $serie_id): ResponseInterface
     {
-        // on valide que la série demandée existe
-        $serie = $this->getRepository(SerieEntity::class)->findOneBy(['id' => $serie_id]);
-        if($serie instanceof SerieEntity === false) {
-            throw new NotFoundException($request, $response);
-        }
 
         // on formate la date envoyée: par défaut si pas de date précisée, on choisi la date courante
         $quantity_at = $request->getQueryParam('quantity_at');
@@ -203,8 +203,5 @@ class GestionnaireController extends Controller
         }
 
         return $response->withJson($json);
-
-        return $response->withStatus(204);
-        // return $this->render($response, 'gestionnaires.ilots_quantities.inc', ['ilots' => $ilots]);
     }
 }

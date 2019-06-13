@@ -59,8 +59,6 @@ class IlotsManager extends Manager
         $qb->setParameter('start', $quantity_at->format('Y-m-d'))
             ->setParameter('end', $quantity_at->format('Y-m-d'));
 
-        // var_dump($qb->getQuery()->getResult()); exit;
-
         return $qb->getQuery()->getResult();
     }
 

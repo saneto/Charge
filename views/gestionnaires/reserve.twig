@@ -35,7 +35,7 @@
                         <label for="bill_id">N° de devis tkMF: <small>(obligatoire)</small></label>
                     </div>
                     <div class="input">
-                        <input type="text" id="bill_id" name="bill_id" placeholder="Numéro de cde interne tkMF" required>
+                        <input type="text" id="bill_id" name="bill_id" placeholder="Numéro de cde interne tkMF" value="{{ start}}" >
                     </div>
                 </div>
 
@@ -44,7 +44,12 @@
                         <label for="cas_type">N° de CAS:</label>
                     </div>
                     <div class="input">
-                        <input type="text" id="cas_type" name="cas_type" placeholder="Numéro de CAS">
+                        <select name="cas_type" id="cas_type">
+                            <option value="">Sélectionnez un numéro de cas</option>
+                            {% for cas in casVme %}
+                                <option value="{{ cas.numCAS }}">{{ cas.numCAS }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
 
@@ -83,6 +88,25 @@
                         <input type="text" id="transporteur" name="transporteur" placeholder="Transporteur">
                     </div>
                 </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="date_depart">Date de départ atelier:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="date_depart" class="datepicker" name="date_depart" >
+                    </div>
+                </div>
+
+                <div class="fieldset">
+                    <div class="label">
+                        <label for="date_lancement">Date de lancement:</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="date_lancement" class="datepicker" name="date_lancement" value="{{ commande.dateLancement|date('d/m/Y') }}" >
+                    </div>
+                </div>
+
             </div>
 
             <div class="tkmf_block-text">
@@ -106,16 +130,22 @@
                 </div>
                 <div class="fieldset">
                     <div class="label">
-                        <label for="date_livraison">Date de livraison:</label>
+                        <label for="date_livraison">Date de livraison:  <small>(obligatoire)</small></label>
                     </div>
                     <div class="input">
-                        <input type="text" id="date_livraison" name="date_livraison" placeholder="Date de livraison Client" class="datepicker text-left">
+                        <input type="text" id="date_livraison" name="date_livraison" placeholder="Date de livraison Client" class="datepicker text-left" required>
                     </div>
                 </div>
             </div>
 
             <div class="tkmf_block-text">
                 <h2>Prélèvements des pièces:</h2>
+
+                <div class="input">
+                    <input type="text" id="choisirSemaine" name="choisirSemaine" placeholder="Veuillez choisir la semaine"  style="width:30%;" class="datepicker text-left">
+                </div>
+
+
                 <div id="gst-reserve_fullcalendar" data-holidays="{{ path_for('events.holidays') }}" data-events="{{ path_for('gestionnaires.ilots_events', { serie_id: serie.id }) }}"></div>
 
                 <div style="margin-top: 8px;">
@@ -127,7 +157,24 @@
                         <b>Vos prélèvements sont indiqués par les bandeaux <span class="tk-blue"><span class="icon-tk-download"></span></span> dans le calendrier ci-dessus.</b>
                     </div>
                     <div>
-                        Total des prélèvements: <span class="tk-blue"><span id="count_supplying" class="icon-tk-download" data-count="0">0</span> pièces</span>
+                        Total des prélèvements:<br/>
+                        {% for depot in depots %}
+                            {% if ilots[depot.id] is not empty %}
+                                    {% for ilot in ilots[depot.id] %}
+                                        <span id ="count_supplying_bloc{{ ilot.id }}" class="tk-blue" style = "  display: none">
+                                            <span id="count_supplying" class="icon-tk-download" >
+                                                    {{ ilot.name ~ " " ~ ilot.label }} :
+                                                    <span id="count_supplying_{{ ilot.id }}" data-count="0">
+                                                        0
+                                                    </span>
+                                            </span> pièces
+
+                                        <br>
+                                        </span>
+                                    {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>

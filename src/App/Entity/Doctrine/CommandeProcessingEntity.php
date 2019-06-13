@@ -7,6 +7,11 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class CommandeProcessingEntity extends Entity
 {
+    const QUERYBUILDER_MAPPING = [
+        'Ilot_de_fabrication' => 'ilot',
+        'depot_de_fabrication' => 'depot',
+    ];
+
     /**
      * @var int
      */
@@ -51,6 +56,14 @@ class CommandeProcessingEntity extends Entity
     public function __toString()
     {
         return (string) $this->getIlot();
+    }
+
+    /**
+     * SerieEntity constructor.
+     */
+    public function __construct()
+    {
+
     }
 
     /**

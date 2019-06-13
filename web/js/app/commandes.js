@@ -24,7 +24,7 @@
                 type: 'integer',
                 input: 'select',
                 values: $builderData.series,
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
+                operators:  ['equal', 'between', 'not_between'],
                 optgroup: 'tkmf'
             },
             {
@@ -33,6 +33,13 @@
                 type: 'string',
                 input: 'select',
                 values: $builderData.users,
+                operators:  ['equal', 'between', 'not_between'],
+                optgroup: 'tkmf'
+            },
+            {
+                id: 'commande_id',
+                label: "N° de devis",
+                type: 'integer',
                 operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
                 optgroup: 'tkmf'
             },
@@ -42,14 +49,7 @@
                 type: 'string',
                 input: 'select',
                 values: $builderData.ilots,
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
-                optgroup: 'tkmf'
-            },
-            {
-                id: 'commande_id',
-                label: "N° de devis",
-                type: 'integer',
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
+                operators:  ['equal', 'between', 'not_between'],
                 optgroup: 'tkmf'
             },
             {
@@ -63,7 +63,7 @@
                 id: 'commande_cas_type',
                 label: "N° de CAS",
                 type: 'string',
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
+                operators:  ['equal', 'between', 'not_between'],
                 optgroup: 'tkmf'
             },
             {
@@ -84,14 +84,14 @@
                 id: 'commande_client_name',
                 label: "Nom du client",
                 type: 'string',
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
+                operators:  ['equal', 'between', 'not_between', 'is_null'],
                 optgroup: 'client'
             },
             {
                 id: 'commande_client_reference',
                 label: "Référence commande",
                 type: 'string',
-                operators:  ['equal', 'less', 'less_or_equal', 'greater', 'greater_or_equal', 'between', 'not_between', 'is_null'],
+                operators:  ['equal', 'between', 'not_between', 'is_null'],
                 optgroup: 'client'
             },
             {

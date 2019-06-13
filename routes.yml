@@ -67,6 +67,10 @@ routes:
         pattern: "/charges/{charge_id:[0-9]+}"
         methods: [ GET, PUT ]
         callable: CommandesController:updateCharge
+      commandes.ilot.add:
+        pattern: "/ilot/{charge_id:[0-9]+}"
+        methods: [ PUT ]
+        callable: CommandesController:addIlot
       commandes.cancel:
         pattern: "/cancel/{bill_id:[0-9]+}"
         methods: [ GET ]
@@ -75,6 +79,10 @@ routes:
         pattern: "/{bill_id:[0-9]+}/comments"
         methods: [ POST ]
         callable: CommandesController:addComment
+      commandes.excel:
+        pattern: "/excel"
+        methods: [ GET ]
+        callable: CommandesController:excelfle
 
 
   accounts.add_vme_id:

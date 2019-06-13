@@ -80,6 +80,10 @@ class DoctrineProvider extends ProviderFactory
             'user'     => 'root',
             'password' => ''
         ];
+        /*
+        'user'     => 'charge_cde',
+            'password' => 'F57CtTPxU4Bpm42Y'
+        */
 
         switch ($env) {
             case 'dev':
@@ -87,11 +91,11 @@ class DoctrineProvider extends ProviderFactory
                 $settings['port'] = 3306;
                 break;
             case 'tests':
-                $settings['dbname'] = 'charge_cde_tests';
+                $settings['dbname'] = 'charge';
                 $settings['port'] = 3316;
                 break;
             case 'prod':
-                $settings['dbname'] = 'charge_cde';
+                $settings['dbname'] = 'charge';
                 $settings['port'] = 3316;
                 break;
         }

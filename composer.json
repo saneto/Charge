@@ -28,6 +28,7 @@
     "azuyalabs/yasumi": "^1.6",
     "slim/http-cache": "^0.4.0",
     "cocur/slugify": "^3.0",
-    "fourlabs/qbjs-parser": "dev-master"
+    "fourlabs/qbjs-parser": "dev-master",
+    "phpoffice/phpspreadsheet": "^1.6"
   }
 }

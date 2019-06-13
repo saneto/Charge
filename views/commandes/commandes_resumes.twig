@@ -11,16 +11,20 @@
     {% endif %}
     <div class="commande">
         <div class="tkmf_btn-list last">
-            <a href="{{ path_for('commandes.details', { bill_id: commande.id }) }}"
-               title="Consulter les détails de cette commande" style="{{ style }}">{{ status }}Commande n°{{ commande }}
-                (BL {{ commande.blId }}) - {{ commande.quantity }} pièces</a>
+            <div>
+                <input type="checkbox" id="check{{ commande.blId }}" name="subscribe" value="newsletter">
 
+                <a href="{{ path_for('commandes.details', { bill_id: commande.id }) }}"
+                   title="Consulter les détails de cette commande" style="{{ style }}">{{ status }}Commande n°{{ commande }}
+                    (BL {{ commande.blId }}) - {{ commande.quantity }} pièces</a>
+
+            </div>
             <ul>
                 <li class="vendor">Vendeur: <a href="{{ path_for('accounts.index', { user_id: commande.vendor.id }) }}">{{ commande.vendor }}</a></li>
                 <li class="vendor">Client: {{ commande.clientName }}</li>
                 <li class="wreck">Type de commande: Série {{ commande.serie|serie_label(false) }}</li>
-                <li class="go">Lancement de la commande: {{ commande.processingAt|date('d/m/Y') }}</li>
-                <li class="go">Départ de la commande: {{ commande.deliveryAt|date('d/m/Y') }}</li>
+                <li class="go">Lancement de la commande: {{ commande.dateLancement|date('d/m/Y') }}</li>
+                <li class="go">Départ de la commande: {{ commande.departTs ? commande.departTs|date('d/m/Y') }}</li>
 
                 {% if commande.machineTs %}
                     <li class="machine">Machine TS: {{ commande.machineTs }}</li>
@@ -38,12 +42,14 @@
                 </tr>
                 </thead>
                 <tbody>
+                
                 {% for comment in commande.comments %}
+                
                     <tr>
                         <td style="text-align: center;">{{ comment.type }}</td>
                         <td style="text-align: center;">{{ comment.author }}</td>
                         <td>{{ comment.text }}</td>
-                        <td style="text-align: center;">{{ comment.date|date('d/m/Y') }}</td>
+                        <td style="text-align: center;">{{ comment.created_at|date('d/m/Y') }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

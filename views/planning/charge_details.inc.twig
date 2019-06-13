@@ -10,7 +10,7 @@
     <hr>
     {% for line in charges %}
         <div class="app_planning_commande-charge">
-            <div class="date">{{ line.bill.createdAt|date('d/m/Y \\à H\\hi') }} - <a href="{{ path_for('commandes.details', { bill_id: line.bill.id }) }}">{{ line.bill.id }}</a></div>
+            <div class="date">{{ line.bill.createdAt|date('d/m/Y \\à H\\hi') }} - <a href="{{ path_for('commandes.details', { bill_id: line.bill.id }) }}">{{ line.bill.blId }}</a></div>
             <div class="app_planning_commande-charge_container">
                 <a href="{{ path_for('accounts.index', { user_id: line.bill.vendor.id }) }}">{{ line.bill.vendor }} ({{ line.bill.vendor.vme_id }})</a>
                 a prélevé <b>{{ line.quantity }} pièces</b>

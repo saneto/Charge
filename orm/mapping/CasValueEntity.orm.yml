@@ -1,0 +1,15 @@
+App\Entity\Doctrine\CasValueEntity:
+  type: entity
+  table: cas_value
+  id:
+    id:
+      type: integer
+      nullable: false
+      options:
+        unsigned: true
+      id: true
+  fields:
+    numCAS:
+      type: integer
+      nullable: false
+      column: Num_CAS
