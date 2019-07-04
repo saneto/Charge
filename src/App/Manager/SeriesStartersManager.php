@@ -83,7 +83,6 @@ class SeriesStartersManager extends Manager
 
     public function getNextSerieStarterbyUser(SerieEntity $serie, int $vendor )
     {
-        $bls = null;
         $bls = $this->getRepository(SerieStarterEntity::class)->findOneBy([
             'serie'=>$serie->getId(),
             'reserved_by' => $vendor,
@@ -95,37 +94,7 @@ class SeriesStartersManager extends Manager
                 'serie'=>$serie->getId(),
                 'reserved_by' => null,
                 'created' => 0
-            ], ['starter' => 'DESC']);
-
-            if($bls == null)
-            {
-                $bls = $this->getRepository(SerieStarterEntity::class)->findOneBy([
-                    'serie'=>$serie->getId(),
-                    'reserved_by' => null
-                ], ['id' => 'DESC']);
-                $cde = $this->getRepository(CommandeEntity::class)->createQueryBuilder('cde')
-                    ->select('s AS serie', 'cde.blId AS starter, cde.createdAt')
-                    ->leftJoin(
-                        SerieEntity::class, 's',
-                        Join::WITH, 's.id = cde.serie'
-                    )
-                    ->where('cde.serie = :serie_id')
-                    ->orderBy('cde.createdAt', 'DESC');
-
-                $cde->setParameter('serie_id', $serie->getId())
-                    ->setMaxResults(1);
-                $commandeStarter = $cde->getQuery()->getOneOrNullResult();
-                $commandeStarter = (new SerieStarterEntity)
-                    ->setSerie($commandeStarter['serie'])
-                    ->setStarter($commandeStarter['starter'])
-                    ->setCreatedAt($commandeStarter['createdAt']);
-                if (
-                    $commandeStarter->getStarter() > $bls->getStarter()
-                    && $commandeStarter->getCreatedAt() > $bls->getCreatedAt()
-                ) {
-                    $bls = $commandeStarter;
-                }
-            }
+            ], ['created_at' => 'DESC']);
             if($this->controlInsert($bls->getStarter()+1 ) == null)
             {
                 $this->insertInDB($serie,$bls,$vendor);
