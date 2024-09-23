@@ -1,0 +1,37 @@
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.statemachine.listener.StateMachineListenerAdapter;
+import org.springframework.statemachine.state.State;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ResourceStateMachineListener extends StateMachineListenerAdapter<String, String> {
+
+    @Autowired
+    private ResourceRepository resourceRepository;
+
+    @Autowired
+    private StateRepository stateRepository;
+
+    // Inject resourceId dynamically
+    private Long resourceId;
+
+    public void setResourceId(Long resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    @Override
+    public void stateChanged(State<String, String> from, State<String, String> to) {
+        if (to != null && resourceId != null) {
+            Optional<Resource> resourceOpt = resourceRepository.findById(resourceId);
+            if (resourceOpt.isPresent()) {
+                Resource resource = resourceOpt.get();
+                State newState = stateRepository.findByName(to.getId());
+                if (newState != null) {
+                    resource.setState(newState);
+                    resourceRepository.save(resource);
+                    System.out.println("Resource state updated to: " + newState.getName());
+                }
+            }
+        }
+    }
+}
